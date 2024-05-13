@@ -70,9 +70,12 @@
                         <span style="color: hsl(218, 81%, 75%)"> Your Marketplace, Your Success.</span>
                     </h1>
                     <p class="mb-4 opacity-70" style="color: hsl(218, 81%, 85%)">
-                        Welcome to our vibrant multi-vendor marketplace, where shoppers and sellers converge for a seamless 
-                        shopping experience. Whether you're here to explore unique products or showcase your own creations, 
-                        our platform provides a secure and user-friendly environment.Join our community today to discover 
+                        Welcome to our vibrant multi-vendor marketplace, where shoppers and sellers converge for a
+                        seamless
+                        shopping experience. Whether you're here to explore unique products or showcase your own
+                        creations,
+                        our platform provides a secure and user-friendly environment.Join our community today to
+                        discover
                         endless possibilities and unleash your entrepreneurial spirit.
                     </p>
                 </div>
@@ -89,7 +92,8 @@
                                 <div class="row">
                                     <div class="col-md-12 mb-4">
                                         <div class="form-outline text-start">
-                                            <input type="text" id="form3Example1" class="form-control" name="name"/>
+                                            <input type="text" id="form3Example1" class="form-control"
+                                                name="name" />
                                             <label class="form-label" for="form3Example1">Full Name</label>
                                             @error('name')
                                                 <div class="text-danger">{{ $message }}</div>
@@ -106,7 +110,7 @@
 
                                 <!-- Email input -->
                                 <div class="form-outline mb-4 text-start">
-                                    <input type="email" id="form3Example3" class="form-control" name="email"/>
+                                    <input type="email" id="form3Example3" class="form-control" name="email" />
                                     <label class="form-label" for="form3Example3">Email address</label>
                                     @error('email')
                                         <div class="text-danger">{{ $message }}</div>
@@ -115,21 +119,21 @@
 
                                 <!-- Password input -->
                                 <div class="form-outline mb-4 text-start">
-                                    <input type="password" id="form3Example4" class="form-control" name="password"/>
+                                    <input type="password" id="form3Example4" class="form-control" name="password" />
                                     <label class="form-label" for="form3Example4">Password</label>
                                     @error('password')
                                         <div class="text-danger">{{ $message }}</div>
-                                    @enderror   
+                                    @enderror
                                 </div>
 
                                 <!-- Checkbox -->
-                                <div class="form-check d-flex justify-content-center mb-4 text-start">
+                                {{-- <div class="form-check d-flex justify-content-center mb-4 text-start">
                                     <input class="form-check-input me-2" type="checkbox" value="" id="form2Example33"
                                         checked name="subscribe"/>
                                     <label class="form-check-label" for="form2Example33">
                                         Subscribe to our newsletter
                                     </label>
-                                </div>
+                                </div> --}}
 
                                 <!-- Submit button -->
                                 <button type="submit" class="btn btn-primary btn-block mb-4">
@@ -138,8 +142,9 @@
 
                                 <!-- Register buttons -->
                                 <div class="text-center">
-                                    <p>Already have an account? <a href="{{ route('customerLogin') }}"> <b> Sign In! </b> </a> </p>
-                                    
+                                    <p>Already have an account? <a href="{{ route('customerLogin') }}"> <b> Sign In!
+                                            </b> </a> </p>
+
                                 </div>
                             </form>
                         </div>

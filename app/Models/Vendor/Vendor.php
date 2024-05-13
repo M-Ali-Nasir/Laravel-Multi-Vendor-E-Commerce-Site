@@ -9,6 +9,7 @@ use App\Models\Vendor\PaymentMethod;
 use App\Models\Vendor\VendorBankDetails;
 use App\Models\Vendor\Products\Variations;
 use App\Models\Vendor\Products\Product_categories;
+use App\Models\Vendor\FacebookAuthorization;
 
 class Vendor extends Model
 {
@@ -19,6 +20,11 @@ class Vendor extends Model
         'password',
          // Include the remember_token field here
     ];
+
+    public function facebookAuthorization()
+    {
+        return $this->hasOne(FacebookAuthorization::class);
+    }
 
     public function store()
     {

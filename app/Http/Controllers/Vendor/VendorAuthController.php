@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use App\Models\Vendor\Vendor;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\VendorWelcomeEmail;
+use Illuminate\Support\Str;
+use App\Mail\VendorActivation;
 
 class VendorAuthController extends Controller
 {
@@ -32,6 +36,12 @@ class VendorAuthController extends Controller
         $user->password = Hash::make($validated['password']);
         
         $user->save();
+
+        //sending welcome email to vendor
+        $toEmail = $user->email;
+
+        Mail::to($toEmail)->send(new VendorWelcomeEmail($user));
+
         return redirect()->route('vendorLogin');
     }
 
@@ -63,5 +73,51 @@ class VendorAuthController extends Controller
             return redirect()->route('home');
         }
         return redirect()->route('home');
+    }
+
+    public function activation($id){
+        $vendor = Vendor::where('id', $id)->first();
+
+        $pin = mt_rand(100000, 999999);
+
+        
+        Mail::to($vendor->email)->send(new VendorActivation($vendor,$pin));
+
+        if(Session::has("varification_pin")){
+            Session::forget("varification_pin");
+        }
+        Session::put("varification_pin", $pin);
+
+        return view('vendor.authentication.activation', compact('vendor'));
+
+    }
+
+    public function activateVendor(Request $request, $id){
+        $vendor = Vendor::where('id', $id)->first();
+
+        // $request->validate([
+        //     'd1' => 'required|max:9',
+        //     'd2' => 'required|max:9',
+        //     'd3' => 'required|max:9',
+        //     'd4' => 'required|max:9',
+        //     'd5' => 'required|max:9',
+        //     'd6' => 'required|max:9',
+        // ]);
+
+        $userPin = $request->d1.$request->d2.$request->d3.$request->d4.$request->d5.$request->d6;
+        
+        if(Session::has('varification_pin')){
+            $pin = Session::get('varification_pin');
+            if($userPin == $pin){
+                $vendor->status = 'active';
+                $vendor->save();
+                return redirect()->route('vendorProfile', ['vendorName'=> $vendor->name]);
+            }else{
+                return redirect()->route('activation',['id'=> $vendor->id])->with('error','invalid code');
+            }
+        }else{
+            return redirect()->route('activation',['id'=> $vendor->id])->with('error','Session timed out! Retry');
+        }
+
     }
 }

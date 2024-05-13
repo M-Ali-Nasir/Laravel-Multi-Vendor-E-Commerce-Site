@@ -12,6 +12,7 @@ use App\Models\Vendor\Products\Product_categories;
 use App\Models\Vendor\Store;
 use App\Models\Vendor\PaymentMethod;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Vendor\FacebookAuthorization;
 
 class ProductController extends Controller
 {
@@ -139,13 +140,55 @@ class ProductController extends Controller
                 $product->paymentMethods()->attach($method);
             }
 
-            return redirect()
-                ->route('addProductPage', ['vendorName' => $vendor->name])
-                ->with('success', 'Product created successfully!');
+            // Check if vendor has authorized Facebook posting
+            //$vendor = auth()->guard('vendor')->user(); // Replace with your vendor authentication method
+            $authorization = FacebookAuthorization::where('vendor_id', $vendor->id)->first();
+
+            if ($authorization && $authorization->facebook_access_token) {
+                try {
+                    $this->postProductToFacebook($product, $authorization->facebook_access_token);
+                    return redirect()->route('addProductPage', ['vendorName' => $vendor->name])->with('success', 'Product added and posted to Facebook successfully!');
+                } catch (\Exception $e) {
+                    return back()->withErrors(['facebook_error' => 'Failed to post to Facebook: ' . $e->getMessage()])->withInput();
+                }
+            } else {
+                return redirect()->route('addProductPage', ['vendorName' => $vendor->name])->with('success', 'Product added successfully. Please connect your Facebook page to post products.');
+            }
+
+
+
+            // return redirect()
+            //     ->route('addProductPage', ['vendorName' => $vendor->name])
+            //     ->with('success', 'Product created successfully!');
         } else {
             return redirect()->route('home');
         }
     }
+
+    private function postProductToFacebook(Product $product, string $accessToken)
+    {
+        // Use Laravel Socialite or Guzzle HTTP (depending on your approach)
+        // to interact with Facebook Graph API and post product information
+        // Replace with your implementation
+
+        // Example using Guzzle (replace with actual API call)
+        $client = new Client();
+        $response = $client->post('https://graph.facebook.com/v13.0/' . $authorization->facebook_page_id . '/posts', [
+            'form_params' => [
+                'message' => $product->name . "\n" . $product->description,
+                'access_token' => $accessToken,
+            ],
+        ]);
+
+        // Check for successful response
+        if ($response->getStatusCode() === 200) {
+            // Handle successful post
+        } else {
+            throw new \Exception('Failed to post to Facebook: ' . $response->getBody());
+        }
+    }
+
+    
 
     public function productList($id)
     {

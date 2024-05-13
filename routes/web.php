@@ -7,9 +7,10 @@ use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Products\CategoryController;
 use App\Http\Controllers\Products\ProductController;
 use App\Http\Controllers\User\CheckoutController;
-use App\Http\Controllers\vendor\VendorAuthController;
-use App\Http\Controllers\vendor\VendorController;
-use App\Http\Controllers\vendor\BankDetailsController;
+use App\Http\Controllers\Vendor\VendorAuthController;
+use App\Http\Controllers\Vendor\VendorController;
+use App\Http\Controllers\Vendor\BankDetailsController;
+use App\Http\Controllers\Vendor\VendorFacebookController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\User\Cart;
 
@@ -115,6 +116,13 @@ Route::get('vendor/admin/{vendorName}/{id}/edit-product',[ProductController::cla
 Route::post('vendor/admin/{id}/{product_id}/edit-product',[ProductController::class, 'editProduct'])->name('editProduct');
 Route::get('vendor/admin/{id}/{product_id}/delete_product',[ProductController::class, 'deleteProduct'])->name('deleteProduct');
 
+
+// Route for initiating Facebook authorization
+Route::get('/vendor/facebook/connect', [VendorFacebookController::class, 'connectToFacebook'])->name('vendor.facebook.connect');
+
+// Route for handling Facebook authorization callback
+Route::get('/facebook/callback', [VendorFacebookController::class, 'handleFacebookCallback']);
+
 //Product categories
 
 Route::get('vendor/admin/{id}/product-categories',[ProductController::class, 'productCategories'])->name('productCategories');
@@ -129,3 +137,10 @@ Route::get('vendor/admin/{id}/product-variations',[ProductController::class, 'pr
 Route::post('vendor/admin/{id}/create-new-variation',[ProductController::class, 'createVariation'])->name('createVariation');
 Route::post('vendor/admin/{id}/{var_id}/edit-variation',[ProductController::class, 'editVariation'])->name('editVariation');
 Route::get('vendor/admin/{id}/{var_id}/delete-variation',[ProductController::class, 'deleteVariation'])->name('deleteVariation');
+
+
+
+//activate vendor routes
+
+Route::get('vendor/admin/{id}/activation-varification', [VendorAuthController::class, 'activation'])->name('activation');
+Route::post('venor/admin/activate/{id}',[VendorAuthController::class, 'activateVendor'])->name('activate');

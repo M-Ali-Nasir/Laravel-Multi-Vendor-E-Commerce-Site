@@ -11,6 +11,8 @@ use App\Models\Vendor\Store;
 use App\Models\Vendor\Products\Product;
 use App\Models\Vendor\Products\Product_categories;
 use App\Models\Vendor\Vendor;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UserWelcomeEmail;
 
 
 class AuthController extends Controller
@@ -39,6 +41,13 @@ class AuthController extends Controller
         $user->password = Hash::make($validated['password']);
         
         $user->save();
+
+        //sending welcome email to user 
+
+        $toEmail = $user->email;
+
+        Mail::to($toEmail)->send(new UserWelcomeEmail($user));
+
         return redirect('/login');
     }
 
