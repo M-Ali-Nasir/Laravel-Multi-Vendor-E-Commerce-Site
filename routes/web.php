@@ -19,6 +19,10 @@ use App\Http\Controllers\User\Cart;
 // Home Page
 Route::get('/',[HomeController::class, 'home'])->name('home');
 
+//Privacy Policy
+
+Route::get('/privacy-policy',[HomeController::class, 'privayPolicy'])->name('privacyPolicy');
+
 //About page route
 Route::get('/about',[HomeController::class, 'aboutPage'])->name('aboutPage');
 
@@ -64,6 +68,9 @@ Route::get('home/product/{product_id}/',[ProductController::class, 'productView'
 // Checkout
 
 Route::get('home/customername/checkout',[CheckoutController::class, 'CheckoutView'])->name('checkoutView');
+Route::get('home/{id}/stripe/checkout', [CheckoutController::class, 'stripeCheckout'])->name('stripe.checkout');
+Route::get('home/stripe/checkout/success/{customerId}', [CheckoutController::class, 'stripeCheckoutSuccess'])->name('stripe.checkout.success');
+
 
 
 
@@ -144,3 +151,5 @@ Route::get('vendor/admin/{id}/{var_id}/delete-variation',[ProductController::cla
 
 Route::get('vendor/admin/{id}/activation-varification', [VendorAuthController::class, 'activation'])->name('activation');
 Route::post('venor/admin/activate/{id}',[VendorAuthController::class, 'activateVendor'])->name('activate');
+
+

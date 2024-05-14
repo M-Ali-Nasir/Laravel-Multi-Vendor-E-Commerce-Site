@@ -9,6 +9,7 @@ use App\Models\User\Cart as UserCart;
 use App\Models\Vendor\Products\Product;
 use App\Models\Vendor\Vendor;
 use App\Models\Vendor\Store;
+use App\Models\Vendor\Products\Variations;
 
 
 class Cart extends Controller
@@ -28,7 +29,7 @@ class Cart extends Controller
             'variation' => 'required'
         ]);
         $customer = UserCart::where('id', $customerId)->first();
-        if(empty($customer)){
+        // if(empty($customer)){
             $cart = new UserCart();
 
             $cart->customer_id = $customerId;
@@ -36,14 +37,15 @@ class Cart extends Controller
             $cart->vendor_id = $vendor->id;
             $cart->quantity = $validated['quantity'];
             $cart->price = $validated['price'];
+            $cart->variation_id = $request->variation;
 
             $cart->save();
 
             return redirect()->back()->with('success','Product Added Successfully');
 
-        }else{
-            echo($customer);
-            echo($request);
-        }
+        // }else{
+        //     echo($customer);
+        //     echo($request);
+        // }
     }
 }

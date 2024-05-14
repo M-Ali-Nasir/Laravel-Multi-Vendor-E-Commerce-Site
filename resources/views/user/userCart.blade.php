@@ -34,10 +34,23 @@
 
 
 
-    <section class="h-100 h-custom">
+    <section class="">
+        @php
+            $totalPrice = 0;
+            $shippingFee = 0;
+            $tax = 0;
+        @endphp
         <div class="container h-100 py-5">
             <div class="p-0 row d-flex justify-content-center align-items-center">
                 <div class="col">
+
+                    @if (Session::has('success'))
+                        <div class="d-flex align-text-center justify-content-center">
+                            <div class="col-md-4 alert alert-success alert-dismissible text center fade show">
+                                <strong>Order Completed!</strong> {{ Session::get('success') }}
+                            </div>
+                        </div>
+                    @endif
 
                     <div class="table-responsive">
                         <table class="table">
@@ -52,6 +65,7 @@
                             </thead>
                             <tbody>
                                 @if (count($userCart) != 0)
+
                                     @foreach ($userCart as $item)
                                         @foreach ($products as $product)
                                             @if ($product->id == $item->product_id)
@@ -74,12 +88,12 @@
                                                         <div class="d-flex flex-row">
 
                                                             <div class="quantity-container">
-                                                                <button class="quantity-btn" id="decrease"><i
-                                                                        class="bi bi-dash"></i></button>
-                                                                <input type="number" class="quantity-input" id="quantity"
-                                                                    value="{{ $item->quantity }}" min="1" readonly>
-                                                                <button class="quantity-btn" id="increase"><i
-                                                                        class="bi bi-plus"></i></button>
+                                                                {{-- <button class="quantity-btn" id="decrease"><i
+                                                                        class="bi bi-dash"></i></button> --}}
+                                                                <p class="mb-0" style="font-weight: 500;" id="quantity">
+                                                                    {{ $item->quantity }}</p>
+                                                                {{-- <button class="quantity-btn" id="increase"><i
+                                                                        class="bi bi-plus"></i></button> --}}
                                                             </div>
                                                         </div>
                                                     </td>
@@ -90,10 +104,15 @@
                                                     </td>
                                                     <td class="align-middle">
                                                         <p class="mb-0" style="font-weight: 500;" id="totalPrice">
-
+                                                            {{ $item->price * $item->quantity }}
                                                         </p>
                                                     </td>
                                                 </tr>
+                                                @php
+                                                    $totalPrice += $item->price * $item->quantity;
+                                                    $shippingFee += 100;
+                                                    $tax += 2;
+                                                @endphp
                                             @endif
                                         @endforeach
                                     @endforeach
@@ -105,13 +124,13 @@
                         </table>
                     </div>
 
-                    <div class="card shadow-2-strong mb-5 mb-lg-0" style="border-radius: 16px;">
+                    <div class="card shadow-2-strong mb-5 mb-lg-0 mb-5" style="border-radius: 16px;">
                         <div class="card-body p-4">
 
                             <div class="row">
                                 <div class="col-md-6 col-lg-4 col-xl-3 mb-4 mb-md-0">
                                     <form>
-                                        <div class="d-flex flex-row pb-3">
+                                        {{-- <div class="d-flex flex-row pb-3">
                                             <div class="d-flex align-items-center pe-2">
                                                 <input class="form-check-input" type="radio" name="radioNoLabel"
                                                     id="radioNoLabel1v" value="" aria-label="..." checked />
@@ -147,9 +166,9 @@
                                             </div>
                                         </div>
                                     </form>
-                                </div>
-                                <div class="col-md-6 col-lg-4 col-xl-6">
-                                    {{-- <div class="row">
+                                </div> --}}
+                                        <div class="col-md-6 col-lg-4 col-xl-6">
+                                            {{-- <div class="row">
                     <div class="col-12 col-xl-6">
                       <div class="form-outline mb-4 mb-xl-5">
                         <input type="text" id="typeName" class="form-control form-control-lg" siez="17"
@@ -177,42 +196,43 @@
                       </div>
                     </div>
                   </div> --}}
-                                </div>
-                                <div class="col-lg-4 col-xl-3">
-                                    <div class="d-flex justify-content-between" style="font-weight: 500;">
-                                        <p class="mb-2">Subtotal</p>
-                                        <p class="mb-2">$23.49</p>
-                                    </div>
-
-                                    <div class="d-flex justify-content-between" style="font-weight: 500;">
-                                        <p class="mb-0">Shipping</p>
-                                        <p class="mb-0">$2.99</p>
-                                    </div>
-
-                                    <hr class="my-4">
-
-                                    <div class="d-flex justify-content-between mb-4" style="font-weight: 500;">
-                                        <p class="mb-2">Total (tax included)</p>
-                                        <p class="mb-2">$26.48</p>
-                                    </div>
-
-                                    <a type="button" href="{{ route('checkoutView') }}"
-                                        class="btn btn-primary btn-block btn-lg">
-                                        <div class="d-flex justify-content-between">
-                                            <span>Checkout</span>
-                                            <span>$26.48</span>
                                         </div>
-                                    </a>
+                                        <div class="">
+                                            <div class="d-flex justify-content-between" style="font-weight: 500;">
+                                                <p class="mb-2">Subtotal: </p>&nbsp; &nbsp;
+                                                <p class="mb-2">{{ $totalPrice . ' pkr' }}</p>
+                                            </div>
 
+                                            <div class="d-flex justify-content-between" style="font-weight: 500;">
+                                                <p class="mb-0">Shipping: </p>&nbsp;&nbsp;
+                                                <p class="mb-0">{{ $shippingFee . ' pkr' }}</p>
+                                            </div>
+
+                                            <hr class="my-4">
+
+                                            <div class="d-flex justify-content-between mb-4" style="font-weight: 500;">
+                                                <p class="mb-2">Total pkr (tax + shipping included)</p>
+                                                <p class="mb-2">{{ $totalPrice + $shippingFee + $tax }}</p>
+                                            </div>
+
+                                            <a type="button"
+                                                href="{{ route('stripe.checkout', ['id' => $customer->id]) }}"
+                                                class="btn btn-primary btn-block btn-lg">
+                                                <div class="d-flex justify-content-between">
+                                                    <span>Checkout</span> &nbsp;
+                                                    <span>{{ $totalPrice + $shippingFee + $tax }} pkr</span>
+                                                </div>
+                                            </a>
+
+                                        </div>
                                 </div>
+
                             </div>
-
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </div>
-        </div>
     </section>
 
 

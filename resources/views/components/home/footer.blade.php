@@ -4,6 +4,7 @@
             <div class="col-md-6">
                 <h5>Contact Us</h5>
                 <p>Email: example@example.com</p>
+                <a class="text-decoration-none text-light" href="{{ route('privacyPolicy') }}">Privacy Policy</a>
             </div>
             <div class="col-md-6 text-end">
                 <h5>Follow Us</h5>

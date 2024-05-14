@@ -27,6 +27,10 @@ class HomeController extends Controller
         }
     }
 
+    public function privayPolicy(){
+        return view('privacyPolicy');
+    }
+
 
     public function aboutPage()
     {

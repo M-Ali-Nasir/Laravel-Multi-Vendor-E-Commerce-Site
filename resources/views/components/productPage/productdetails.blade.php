@@ -64,7 +64,9 @@
                                             <option value="{{ $variation->id }}"
                                                 data-image-url="{{ asset('storage/vendor/products/images/' . $variation->pivot->image) }}"
                                                 data-price="{{ $variation->pivot->price_modifier }}"
-                                                data-variation="{{ $variation }}">{{ $variation->name }}</option>
+                                                data-variation="{{ $variation }}"
+                                                data-quantity="{{ $variation->pivot->quantity }}">
+                                                {{ $variation->name }}</option>
                                         @endforeach
                                     </select>
                                     @error('variation')
@@ -84,20 +86,22 @@
                         <div class="form-outline me-1 mb-2" style="width: 100px;">
                             <label for="quantity">Quantity</label>
                             <input type="number" id="quantity" value="1" min="1" class="form-control"
-                                name="quantity" />
+                                name="quantity" disabled />
 
                             @error('quantity')
                                 <div class="alert alert-danger">{{ $message }}</div>
                             @enderror
+
+
                         </div>
 
                         @if (Session::has('customer'))
-                            <button class="btn btn-primary mt-3" type="submit">
+                            <button class="btn btn-primary mt-3" type="submit" id="cartBtn1">
                                 Add to cart
                                 <i class="fas fa-shopping-cart ms-1"></i>
                             </button>
                         @else
-                            <a class="btn btn-primary mt-3" href="{{ route('customerLogin') }}">
+                            <a class="btn btn-primary mt-3" href="{{ route('customerLogin') }}" id="cartBtn2">
                                 Sign In to add into cart
                                 <i class="fas fa-shopping-cart ms-1"></i>
                             </a>
@@ -148,6 +152,59 @@
 
 <script>
     function updateImage() {
+
+        // set max value for quantity input
+        var selectBox = document.getElementById("variation-select");
+        var selectedOption = selectBox.options[selectBox.selectedIndex];
+        var quantityInput = document.getElementById("quantity");
+        var quantityInStock = selectedOption.getAttribute('data-quantity');
+        var cartBtn1 = document.getElementById("cartBtn1");
+        var cartBtn2 = document.getElementById("cartBtn2");
+
+        // Set the max attribute of the quantity input field
+        quantityInput.max = quantityInStock;
+        quantityInput.disabled = false;
+
+
+
+
+
+        @if (Session::has('customer'))
+
+            if (quantityInStock <= 0) {
+                quantityInput.disabled = true;
+                cartBtn1.disabled = true;
+                //cartBtn2.classList.add("disabled");
+
+                cartBtn1.textContent = "Out Of Stock";
+
+                //cartBtn2.textContent = "Out Of Stock";
+            } else {
+                cartBtn1.disabled = false;
+                cartBtn1.textContent = "Add To Cart";
+                //cartBtn2.classList.remove("disabled");
+                //cartBtn2.textContent = "Sign in to Add To Cart";
+
+            }
+        @else
+            if (quantityInStock <= 0) {
+                quantityInput.disabled = true;
+                //cartBtn1.disabled = true;
+                cartBtn2.classList.add("disabled");
+
+                //cartBtn1.textContent = "Out Of Stock";
+
+                cartBtn2.textContent = "Out Of Stock";
+            } else {
+                // cartBtn1.disabled = false;
+                // cartBtn1.textContent = "Add To Cart";
+                cartBtn2.classList.remove("disabled");
+                cartBtn2.textContent = "Sign in to Add To Cart";
+
+            }
+        @endif
+
+        //changing the image according to the selected variation
         var selectBox = document.getElementById("variation-select");
         var selectedOption = selectBox.options[selectBox.selectedIndex];
         var imageElement = document.getElementById("product-image");
