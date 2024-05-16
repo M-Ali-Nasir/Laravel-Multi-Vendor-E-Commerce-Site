@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Http;
 use App\Models\Vendor\Vendor;
 use App\Models\Vendor\Store;
 use App\Models\Vendor\Products\variations;
+use App\Models\User\OrderAddress;
+use App\Models\Vendor\Order;
+use App\Models\Vendor\OrderHistory;
 
 class CheckoutController extends Controller
 {
@@ -20,7 +23,9 @@ class CheckoutController extends Controller
     public function checkoutView(){
         if(Session::has('customer')){
             $customer = Session::get('customer');
-            return view('user.checkout', compact('customer'));
+            $customer = Customer::where('id', $customer->id)->first();
+            $orderAddress = OrderAddress::where('customer_id', $customer->id)->first();
+            return view('user.checkout', compact('customer','orderAddress'));
         }
         else{
             return redirect()->route('customerLogin');
@@ -31,7 +36,7 @@ class CheckoutController extends Controller
     
 
 
-    public function stripeCheckout($id){
+    public function stripeCheckout($id, $orderAddress){
         $customer = Customer::where('id', $id)->first();
         $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
 
@@ -39,7 +44,7 @@ class CheckoutController extends Controller
 
         
 
-        $redirectUrl = route('stripe.checkout.success', ['customerId' => $customer->id]).'?session_id={CHECKOUT_SESSION_ID}';
+        $redirectUrl = route('stripe.checkout.success', ['customerId' => $customer->id, 'orderAddress' => $orderAddress]).'?session_id={CHECKOUT_SESSION_ID}';
 
         // $response = $stripe->checkout->sessions->create([
         //     'success_url' => $redirectUrl,
@@ -99,15 +104,42 @@ class CheckoutController extends Controller
 
     public function stripeCheckoutSuccess(Request $request){
         $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
+
+        $customer = Customer::where('id', $request->customerId)->first();
+
+        // $sessionId = $request->query('session_id');
+        // //dd($request);
+        // if (!isset($sessionId) || empty(trim($sessionId))) {
+        //     // Handle the case where the session ID is null or empty
+        //     return redirect()->route('customerCart',['customerName' => $customer->name])->with('error','Payment Successful: but something went wrong your order is not fullfilled');
+
+        // } else {
+        //     // Proceed with retrieving the checkout session using the validated session ID
+        //     $response = $stripe->checkout->sessions->retrieve($sessionId);
+        // }
+        $string = $request->orderAddress;
+        
+        // Extract the array [19, 20]
+        if (preg_match('/^\[(.*?)\]/', $string, $matches)) {
+            $orderAddresses = json_decode('[' . $matches[1] . ']', true);
+            
+        }
+
+        // Extract the session_id
+        if (preg_match('/session_id=([^&]+)/', $string, $matches)) {
+            $sessionId = $matches[1];
+             // Output: cs_test_b1KvbHb6xbg2Qiy3ERfpse3fIc6urZWzugc2agrJej3FXRAMi6nDa2gMhx
+        }
         
 
-        $response = $stripe->checkout->sessions->retrieve($request->session_id);
+        $response = $stripe->checkout->sessions->retrieve($sessionId);
 
         //$customerId = $request->query('customerId');
-        $customer = Customer::where('id', $request->customerId)->first();
+       
 
         $cartItems = Cart::where('customer_id', $customer->id)->get();
 
+        $orderIds = [];
         foreach($cartItems as $item){
             $product = Product::where('id', $item->product_id)->with('variations')->first();
             $variationId = $item->variation_id; // Replace this with the actual ID of the variation
@@ -122,7 +154,43 @@ class CheckoutController extends Controller
             // Update the quantity for the specified variation
             $product->variations()->updateExistingPivot($variationId, ['quantity' => $newQuantity]);
 
+            //adding into orders
+
+            $newOrder = new Order();
+            $newOrder->vendor_id = $item->vendor_id;
+            $newOrder->customer_id = $item->customer_id;
+            $newOrder->product_id = $item->product_id;
+            $newOrder->variation_id = $item->variation_id;
+            $newOrder->quantity = $item->quantity;
+            $newOrder->payment_method = 'Card';
+            $newOrder->amount = $item->price * $item->quantity;
+
+            $newOrder->save();
+
+            $orderHistory = new OrderHistory();
+            $orderHistory->order_id = $newOrder->id;
+            $orderHistory->status = "Pending";
+            $orderHistory->save();
+
+            array_push($orderIds, $newOrder->id); 
+
         }
+
+
+        //$orderAddresses = json_decode($request->orderAddress);
+
+        
+
+        foreach($orderAddresses as $key=>$address){
+            $address = OrderAddress::where('id', $address)->first();
+
+            $address->order_id = $orderIds[$key];
+            $address->save();
+
+        }
+        
+
+        
         
         
         Cart::where('customer_id', $customer->id)->delete();

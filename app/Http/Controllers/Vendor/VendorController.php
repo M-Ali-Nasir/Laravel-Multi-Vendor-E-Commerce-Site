@@ -10,6 +10,13 @@ use App\Models\Vendor\Store;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Vendor\PaymentMethod;
 use App\Models\Vendor\VendorBankDetails;
+use App\Models\Vendor\Order;
+use App\Models\User\Customer;
+use App\Models\Vendor\Products\Product;
+use Illuminate\Support\Collection;
+use App\Models\Vendor\Products\Variations;
+use App\Models\User\OrderAddress;
+use App\Models\Vendor\OrderHistory;
 
 class VendorController extends Controller
 {
@@ -317,5 +324,134 @@ class VendorController extends Controller
         }else{
             return redirect()->route('home');
         }
+    }
+
+    public function orderDetails($id){
+        $vendor = Vendor::where('id', $id)->first();
+
+        //$orders = Order::where('vendor_id', $vendor->id)->get();
+
+        $pendingOrderIds = OrderHistory::where('status', 'Pending')->pluck('order_id')->toArray();
+        
+        // Retrieve orders for the vendor with pending status
+        $orders = Order::where('vendor_id', $vendor->id)
+            ->whereIn('id', $pendingOrderIds)
+            ->get();
+
+        //$products = new Collection();
+        $customers = new Collection();
+
+        foreach($orders as $order){
+            //$product = Product::where('id', $order->product_id)->first();
+            $customer = Customer::where('id', $order->customer_id)->first();
+
+            //$products->add($product);
+            $customers->add($customer);
+        }
+
+
+        return view('vendor.vendorAdminPanel.orderDetails', compact('vendor','orders','customers'));
+
+    }
+
+    public function singleOrderDetails($id, $order_id){
+        $vendor = Vendor::where('id', $id)->first();
+
+        $order = Order::where('id', $order_id)->first();
+        $orderAddress = OrderAddress::where('order_id', $order->id)->first();
+
+        $product = Product::where('id', $order->product_id)->with('variations')->first();
+        $customer = Customer::where('id', $order->customer_id)->first();
+        $variation = Variations::where('id', $order->variation_id)->first();
+
+        $orderHistory = OrderHistory::where('order_id', $order->id)->first();
+        $store = Store::where('vendor_id', $vendor->id)->first();
+        
+
+        return view('vendor.vendorAdminPanel.singleOrder', compact('vendor','product','customer','variation','order','orderAddress','orderHistory','store'));
+    }
+
+    public function fullfillOrder($id, $order_id){
+        $vendor = Vendor::where('id', $id)->first();
+
+        $order = OrderHistory::where('order_id', $order_id)->first();
+
+        $order->status = "Completed";
+
+        $order->save();
+
+        return redirect()->route('orderDetails',['id' => $vendor->id])->with('success','Order Completed Successfully');
+    }
+
+    public function orderHistory($id){
+        $vendor = Vendor::where('id', $id)->first();
+
+        $completedOrderIds = OrderHistory::where('status', 'Completed')->pluck('order_id')->toArray();
+        
+        // Retrieve orders for the vendor with pending status
+        $orders = Order::where('vendor_id', $vendor->id)
+            ->whereIn('id', $completedOrderIds)
+            ->get();
+
+        //$products = new Collection();
+        $customers = new Collection();
+
+        foreach($orders as $order){
+            //$product = Product::where('id', $order->product_id)->first();
+            $customer = Customer::where('id', $order->customer_id)->first();
+
+            //$products->add($product);
+            $customers->add($customer);
+        }
+
+        return view('vendor.vendorAdminPanel.orderHistory', compact('vendor','orders','customers'));
+
+    }
+
+    // public function orderHistoryDetail($id){
+    //     $vendor = Vendor::where('id', $id)->first();
+
+    //     return view('vendor.vendorAdminPanel.orderHistoryDetail', compact('vendor'));
+    // }
+
+
+    // customers of vendor
+
+    public function vendorCustomers($id){
+        $vendor = Vendor::where('id', $id)->first();
+
+        $ordersId = Order::where('vendor_id', $vendor->id)->pluck('customer_id')->toArray();
+        
+        // Retrieve orders for the vendor with pending status
+        $customers = Customer::whereIn('id', $ordersId)->get();
+
+        
+
+        return view('vendor.vendorAdminPanel.customers', compact('vendor','customers'));
+    }
+
+    //Payment History of vendor
+
+    public function paymentHistory($id){
+        $vendor = Vendor::where('id', $id)->first();
+
+        $ordersId = Order::where('vendor_id', $vendor->id)->pluck('customer_id')->toArray();
+
+        $orders = Order::where('vendor_id', $vendor->id)->get();
+        
+        // Retrieve orders for the vendor with pending status
+        $customers = Customer::whereIn('id', $ordersId)->get();
+
+        $orderHistories = new Collection();
+
+        foreach($orders as $order){
+            //$product = Product::where('id', $order->product_id)->first();
+            $orderHistory = OrderHistory::where('order_id', $order->id)->first();
+
+            //$products->add($product);
+            $orderHistories->add($orderHistory);
+        }
+
+        return view('vendor.vendorAdminPanel.paymentHistory', compact('vendor','orders','customers','orderHistories'));
     }
 }

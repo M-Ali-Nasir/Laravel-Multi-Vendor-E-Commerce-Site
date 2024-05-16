@@ -16,6 +16,7 @@ use App\Http\Controllers\User\Cart;
 
 
 
+
 // Home Page
 Route::get('/',[HomeController::class, 'home'])->name('home');
 
@@ -49,6 +50,7 @@ Route::get('/customer/logout',[AuthController::class, 'logoutUser'])->name('logo
 //User customer page Routes
 
 Route::get('home/profile/{customerName}',[UserController::class, 'customerProfile'])->name('customerProfile');
+Route::post('home/profile/update/{id}',[UserController::class, 'updateCustomerProfile'])->name('updateCustomerProfile');
 Route::get('home/cart/{customerName}',[UserController::class, 'customerCart'])->name('customerCart');
 
 
@@ -67,8 +69,9 @@ Route::get('home/product/{product_id}/',[ProductController::class, 'productView'
 
 // Checkout
 
-Route::get('home/customername/checkout',[CheckoutController::class, 'CheckoutView'])->name('checkoutView');
-Route::get('home/{id}/stripe/checkout', [CheckoutController::class, 'stripeCheckout'])->name('stripe.checkout');
+Route::get('home/{id}/checkout',[CheckoutController::class, 'CheckoutView'])->name('checkoutView');
+Route::post('home/{id}/checkout/shipping-billing-address', [UserController::class, 'addShippingBillingAddress'])->name('addShippingBillingAddress');
+Route::get('home/{id}/stripe/checkout/{orderAddress}', [CheckoutController::class, 'stripeCheckout'])->name('stripe.checkout');
 Route::get('home/stripe/checkout/success/{customerId}', [CheckoutController::class, 'stripeCheckoutSuccess'])->name('stripe.checkout.success');
 
 
@@ -145,6 +148,25 @@ Route::post('vendor/admin/{id}/create-new-variation',[ProductController::class, 
 Route::post('vendor/admin/{id}/{var_id}/edit-variation',[ProductController::class, 'editVariation'])->name('editVariation');
 Route::get('vendor/admin/{id}/{var_id}/delete-variation',[ProductController::class, 'deleteVariation'])->name('deleteVariation');
 
+//Orders routes
+
+Route::get('vendor/admin/{id}/order-details',[VendorController::class, 'orderDetails'])->name('orderDetails');
+Route::get('vendor/admin/{id}/oder-details/{order_id}',[VendorController::class, 'singleOrderDetails'])->name('singleOrderDetails');
+
+Route::get('vendor/admin/{id}/fullfill-order/{order_id}',[VendorController::class, 'fullfillOrder'])->name('fullfillOrder');
+
+
+//order History
+
+Route::get('vendor/admin/{id}/order-histroy',[VendorController::class, 'orderHistory'])->name('orderHistory');
+// Route::get('vendor/admin/{id}/order-history/order-id',[VendorController::class, 'orderHistoryDetail'])->name('orderHistoryDetail');
+
+//vendor's all customers
+Route::get('vendor/admin/{id}/customers',[VendorController::class, 'vendorCustomers'])->name('vendorCustomers');
+
+//vendor's payments
+
+Route::get('vendor/admin/{id}/payments-history', [VendorController::class, 'paymentHistory'])->name('paymentHistory');
 
 
 //activate vendor routes

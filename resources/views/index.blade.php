@@ -27,7 +27,32 @@
         integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
     </script>
 
-    
+
+    <style>
+        /* For webkit-based browsers (Chrome, Safari) */
+        ::-webkit-scrollbar {
+            width: 5px;
+            /* Width of the scrollbar */
+        }
+
+        /* Track (the area around the thumb) */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            /* Color of the track */
+        }
+
+        /* Thumb (the draggable scrolling handle) */
+        ::-webkit-scrollbar-thumb {
+            background: #eaeaea;
+            /* Color of the thumb */
+        }
+
+        /* When hovering over the scrollbar */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #848484;
+            /* Color of the thumb on hover */
+        }
+    </style>
 
 
     @yield('style')
@@ -37,7 +62,7 @@
 <body>
 
 
-    <div class="" style="height: 100vh;">
+    <div class="" style="">
         @yield('content')
     </div>
 

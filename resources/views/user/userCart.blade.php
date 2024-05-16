@@ -51,6 +51,13 @@
                             </div>
                         </div>
                     @endif
+                    @if (Session::has('error'))
+                        <div class="d-flex align-text-center justify-content-center">
+                            <div class="col-md-4 alert alert-danger alert-dismissible text center fade show">
+                                <strong>Order Completed!</strong> {{ Session::get('error') }}
+                            </div>
+                        </div>
+                    @endif
 
                     <div class="table-responsive">
                         <table class="table">
@@ -215,14 +222,23 @@
                                                 <p class="mb-2">{{ $totalPrice + $shippingFee + $tax }}</p>
                                             </div>
 
-                                            <a type="button"
-                                                href="{{ route('stripe.checkout', ['id' => $customer->id]) }}"
+                                            {{-- checkout address page --}}
+                                            <a type="button" href="{{ route('checkoutView', ['id' => $customer->id]) }}"
                                                 class="btn btn-primary btn-block btn-lg">
                                                 <div class="d-flex justify-content-between">
                                                     <span>Checkout</span> &nbsp;
                                                     <span>{{ $totalPrice + $shippingFee + $tax }} pkr</span>
                                                 </div>
                                             </a>
+
+                                            {{-- <a type="button"
+                                                href="{{ route('stripe.checkout', ['id' => $customer->id]) }}"
+                                                class="btn btn-primary btn-block btn-lg">
+                                                <div class="d-flex justify-content-between">
+                                                    <span>Checkout</span> &nbsp;
+                                                    <span>{{ $totalPrice + $shippingFee + $tax }} pkr</span>
+                                                </div>
+                                            </a> --}}
 
                                         </div>
                                 </div>
