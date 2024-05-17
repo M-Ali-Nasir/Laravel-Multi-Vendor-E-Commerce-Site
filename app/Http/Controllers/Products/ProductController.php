@@ -22,12 +22,16 @@ class ProductController extends Controller
         if (Session::has('customer')) {
             $customer = Session::get('customer');
             $customerId = $customer->id;
+            $allcategories = Product_categories::all();
+
             $product = Product::where('id', $product_id)->with('paymentMethods','variations')->first();
-            return view('product', compact('customer','product','customerId'));
+            return view('product', compact('customer','product','customerId','allcategories'));
         } else {
             $product = Product::where('id', $product_id)->with('paymentMethods','variations')->first();
             $customerId = 0;
-            return view('product',compact('product','customerId'));
+            $allcategories = Product_categories::all();
+
+            return view('product',compact('product','customerId','allcategories'));
         }
     }
 

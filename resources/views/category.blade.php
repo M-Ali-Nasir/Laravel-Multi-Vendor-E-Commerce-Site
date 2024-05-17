@@ -1,17 +1,21 @@
 @extends('user.userHome')
 
-@section('title', 'About')
+@section('title', 'Category')
+
+
+
+
 
 @section('body')
 
     @include('components.home.slider')
 
-    <figure class="text-center mt-5">
+    {{-- <figure class="text-center mt-5">
         <blockquote class="blockquote">
-            <p>About MarketPlace Connect</p>
+            <p>{{ $category->Name }}</p>
         </blockquote>
         <figcaption class="blockquote-footer">
-            About MarketPlace Connect
+            Explore Products of {{ $category->name }} Category
         </figcaption>
     </figure>
 
@@ -25,7 +29,9 @@
             ultimate destination. Join us in creating a vibrant marketplace where connections are made,
             transactions are effortless, and shopping is an enjoyable adventure.
         </p>
-    </div>
+    </div> --}}
+    <h6 class="text-center mt-5 mb-3 text-decoration-underline">{{ $category->name }}</h6>
+    @include('components.home.allProducts')
 
 
 @endsection

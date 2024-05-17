@@ -1,33 +1,56 @@
  {{-- Slider --}}
-@php
-  if (Session::has('customer')) {
-      $layout = 'user.userHome';
-  }else {
-      $layout = 'user.userHome';
-  }
-@endphp
+ @php
+     if (Session::has('customer')) {
+         $layout = 'user.userHome';
+     } else {
+         $layout = 'user.userHome';
+     }
+ @endphp
 
 
-@extends($layout)
-
-@section('title', 'MarketPlace-Connect')
-
-@section('search_placeholder','Search Products/Shops/Categories')
-
-@section('search_action','#')
-
-@section('body')
+ @extends($layout)
 
 
-  @include('components.home.slider')
 
-  @include('components.home.categories')
+ {{-- @section('search_action', "{{ route('home') }}") --}}
 
-  @include('components.home.topStores')
-  
-  @include('components.home.allProducts')
+ @section('body')
 
-  @include('components.home.subscribe')
+     @include('components.home.serach')
+
+ @section('title', 'MarketPlace-Connect')
+
+
+
+
+ @include('components.home.slider')
+
+ @php
+     $totalSearch = count($products) + count($categories) + count($stores);
+ @endphp
+
+ @if ($totalSearch > 0)
+     @if ($searchQuery)
+         <div class="container mt-5 mb-5 d-flex justify-content-center">
+             <h6>Search Results : {{ $totalSearch }}</h6>
+         </div>
+     @endif
+
+
+     @include('components.home.categories')
+
+     @include('components.home.topStores')
+
+     @include('components.home.allProducts')
+ @else
+     <div class="container mt-5 mb-5 d-flex justify-content-center">
+         <h6>Search Results : 0</h6>
+     </div>
+ @endif
+
+
+
+ {{-- @include('components.home.subscribe') --}}
 
 
 @endsection

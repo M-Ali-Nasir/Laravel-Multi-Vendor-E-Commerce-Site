@@ -29,6 +29,8 @@ class UserController extends Controller
 
     public function customerProfile($id){
         if(Session::has('customer')){
+            $allcategories = Product_categories::all();
+
             $customer = Session::get('customer');
             $customer = Customer::where('id', $customer->id)->first();
             $orders = Order::where('customer_id', $customer->id)->get();
@@ -39,7 +41,7 @@ class UserController extends Controller
 
                 $products->add($product);
             }
-            return view('user.userProfile', compact('customer','orders','products'));
+            return view('user.userProfile', compact('customer','orders','products','allcategories'));
         }
     }
 
@@ -85,12 +87,14 @@ class UserController extends Controller
 
     public function customerCart(){
         if(Session::has('customer')){
+            $allcategories = Product_categories::all();
+
             $customer = Session::get('customer');
             $customer = Customer::where('id', $customer->id)->first();
             $userCart = Cart::where('customer_id', $customer->id)->get();
             $products = Product::with('paymentMethods')->get();
             $categories = Product_categories::all();
-            return view('user.userCart', compact('customer','userCart','products','categories'));
+            return view('user.userCart', compact('customer','userCart','products','categories','allcategories'));
         }
     }
 

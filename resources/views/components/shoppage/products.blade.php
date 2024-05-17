@@ -1,14 +1,15 @@
-<figure class="text-center mt-5">
-    <blockquote class="blockquote">
-        <p>
-            {{ $store['p-heading'] }}</p>
-    </blockquote>
-    <figcaption class="blockquote-footer">
-        {{ $store['p-subheading'] }}
-    </figcaption>
-</figure>
+@if (count($products) != 0)
+    <figure class="text-center mt-5">
+        <blockquote class="blockquote">
+            <p>
+                {{ $store['p-heading'] }}</p>
+        </blockquote>
+        <figcaption class="blockquote-footer">
+            {{ $store['p-subheading'] }}
+        </figcaption>
+    </figure>
 
-@if (!empty($products))
+
 
     <style>
         .mt-100 {
@@ -104,8 +105,8 @@
                     @foreach ($products as $product)
                         <div class="col-md-3 col-sm-6 p-2">
                             <div class="card mb-30 border-0">
-                                <a class="card-img-tiles" href="{{ route('productView', ['product_id' => $product->id]) }}"
-                                    data-abc="true">
+                                <a class="card-img-tiles"
+                                    href="{{ route('productView', ['product_id' => $product->id]) }}" data-abc="true">
                                     <div class="inner">
                                         <div class="main-img"><img
                                                 src="{{ asset('storage/vendor/products/images/' . $product->image) }}"
@@ -139,7 +140,7 @@
             </div>
         </div>
         <!-- Pagination -->
-        <div class="row">
+        {{-- <div class="row">
             <div class="col-md-12">
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-center">
@@ -155,6 +156,6 @@
                     </ul>
                 </nav>
             </div>
-        </div>
+        </div> --}}
     </div>
 @endif

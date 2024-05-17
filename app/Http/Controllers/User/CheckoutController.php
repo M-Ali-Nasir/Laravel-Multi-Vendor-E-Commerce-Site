@@ -19,6 +19,7 @@ use App\Models\Vendor\OrderHistory;
 use App\Mail\UserOrderDone;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\VendorOrderRecieved;
+use App\Models\Vendor\Products\Product_categories;
 
 
 class CheckoutController extends Controller
@@ -26,10 +27,13 @@ class CheckoutController extends Controller
     //
     public function checkoutView(){
         if(Session::has('customer')){
+
+            $allcategories = Product_categories::all();
+
             $customer = Session::get('customer');
             $customer = Customer::where('id', $customer->id)->first();
             $orderAddress = OrderAddress::where('customer_id', $customer->id)->first();
-            return view('user.checkout', compact('customer','orderAddress'));
+            return view('user.checkout', compact('customer','orderAddress','allcategories'));
         }
         else{
             return redirect()->route('customerLogin');

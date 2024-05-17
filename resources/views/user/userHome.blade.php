@@ -1,7 +1,7 @@
 @extends('index')
 
 @section('style')
-    
+
 @endsection
 
 
@@ -35,12 +35,14 @@
                         <a class="nav-link dropdown-toggle text-dark" href="" onclick="toggleDropdownCategory()"
                             role="button" data-bs-toggle="dropdown" aria-expanded="false">Categories</a>
                         <ul class="dropdown-menu" id="dropdownList">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li>
-                                <hr class="dropdown-divider" />
-                            </li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            @foreach ($allcategories as $category)
+                                <li><a class="dropdown-item"
+                                        href="{{ route('categoryPage', ['id' => $category->id]) }}">{{ $category->name }}</a>
+                                </li>
+                            @endforeach
+
+
+
                         </ul>
                     </li>
                 </ul>
@@ -51,7 +53,7 @@
 
 
 
-                    @include('components.home.serach')
+
 
 
 
@@ -108,7 +110,6 @@
         }
         // Change "none" to "block", "inline", "flex", etc. as needed
     }
-   
 </script>
 
 @endsection

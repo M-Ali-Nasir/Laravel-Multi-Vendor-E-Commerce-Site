@@ -66,7 +66,7 @@ class AuthController extends Controller
             // Password is correct
             // Proceed with login...
             Session::put('customer', $customer);
-            return redirect()->route('customerIndex',['customerName', $customer->name]);
+            return redirect()->route('customerIndex',['customerName', $customer->id]);
             } elseif($customer) {
             // Password is incorrect
             // Handle invalid login...
@@ -84,14 +84,36 @@ class AuthController extends Controller
         return redirect()->route('home');
     }
 
-    public function customerIndex($customerName){
+    public function customerIndex(Request $request, $customerName){
         if(Session::has('customer')){
             $customer = Session::get('customer');
-            $stores = Store::all();
-            $products = Product::with('variations','paymentMethods')->get();
-            $categories = Product_categories::all();
+            $customer = Customer::where('id', $customer->id)->first();
+
+            $allcategories = Product_categories::all();
+
+            $searchQuery = Session::get('searchQuery');
+            
+            // Initialize the query builder for products
+            $productsQuery = Product::with('variations', 'paymentMethods');
+
+            $storesQuery = Store::query();
+            $categoriesQuery = Product_categories::query();
+            // If there's a search query, apply filters
+            if ($searchQuery) {
+                $productsQuery->where('name', 'like', '%' . $searchQuery . '%')->orWhere('description', 'like', '%' . $searchQuery . '%');
+                $storesQuery->where('name', 'like', '%' . $searchQuery . '%')->orWhere('description', 'like', '%' . $searchQuery . '%');
+                $categoriesQuery->where('name', 'like', '%' . $searchQuery . '%');
+            }
+
+            // Get the filtered or all products
+            $products = $productsQuery->get();
+            
+            // Get all stores, categories, and vendors
+            $stores = $storesQuery->get();
+            $categories = $categoriesQuery->get();
             $vendors = Vendor::all();
-            return view('user.home', compact('customer','stores','products','categories','vendors'));
+
+            return view('user.home', compact('customer','stores','products','categories','vendors', 'searchQuery','allcategories'));
         }else{
             return redirect()->route('home');
         }

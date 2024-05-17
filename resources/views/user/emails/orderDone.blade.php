@@ -1,7 +1,7 @@
 Hey {{ $customer->name }}, your order is done of ammount {{ $newOrder->amount }}.
-<b>
-    ORDER DETAILS:
-    <b>
-        NAME: {{ $product->name }}<b>
-            Payment Method: {{ $newOrder->payment_method }}<b>
-                Quantity: {{ $newOrder->quantity }}<b>
+<br>
+<b>ORDER DETAILS:</b>
+<br>
+NAME: {{ $product->name }}<br>
+Payment Method: {{ $newOrder->payment_method }}<br>
+Quantity: {{ $newOrder->quantity }}<br>

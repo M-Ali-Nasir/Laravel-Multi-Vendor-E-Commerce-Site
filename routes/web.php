@@ -42,6 +42,9 @@ Route::get('/all-shops',[HomeController::class, 'allShopsPage'])->name('allShops
 // single shope page
 Route::get('/shop/{id}',[HomeController::class, 'shopPage'])->name('ShopPage');
 Route::get('/shop/{id}/contact/{vendor_id}',[HomeController::class, 'contactVendor'])->name('contactVendor');
+
+//categoriespage
+Route::get('/home/category/{id}',[HomeController::class, 'categoryPage'])->name('categoryPage');
 // Customer Home page
 
 Route::get('/home/{customerName}', [AuthController::class, 'customerIndex'])->name('customerIndex');
