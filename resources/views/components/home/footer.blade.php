@@ -3,7 +3,9 @@
         <div class="row">
             <div class="col-md-6">
                 <h5>Contact Us</h5>
-                <p>Email: example@example.com</p>
+                <p>Email: <a class="text-light"
+                        href="mailTo:marketplaceconnectofficial@gmail.com">marketplaceconnectofficial@gmail.com</a>
+                </p>
                 <a class="text-decoration-none text-light" href="{{ route('privacyPolicy') }}">Privacy Policy</a>
             </div>
             <div class="col-md-6 text-end">

@@ -28,7 +28,65 @@ class VendorController extends Controller
             $vendor = Session::get('vendor');
 
             $vendor = Vendor::where('id', $vendor->id)->first();
-            return view('vendor.vendorAdminPanel.home',compact('vendor'));
+
+            $ordersId = Order::where('vendor_id', $vendor->id)->pluck('customer_id')->toArray();
+        
+            // Retrieve orders for the vendor with pending status
+            $customers = Customer::whereIn('id', $ordersId)->get();
+
+            $orders = Order::where('vendor_id', $vendor->id)->get();
+
+            
+            
+            $pendingOrderIds = OrderHistory::where('status', 'Pending')->pluck('order_id')->toArray();
+        
+            // Retrieve orders for the vendor with pending status
+            $pendingOrders = Order::where('vendor_id', $vendor->id)
+                ->whereIn('id', $pendingOrderIds)
+                ->get();
+
+            
+
+            $completedOrderIds = OrderHistory::where('status', 'Completed')->pluck('order_id')->toArray();
+        
+            // Retrieve orders for the vendor with pending status
+            $completedOrders = Order::where('vendor_id', $vendor->id)
+                ->whereIn('id', $completedOrderIds)
+                ->get();
+
+
+
+            $recievedPayments = Order::where('vendor_id', $vendor->id)
+            ->where('payment_method', 'Card')
+            ->orWhereIn('id', $completedOrderIds)
+            ->get();
+
+
+            //$products = new Collection();
+            // $customers = new Collection();
+
+            // foreach($orders as $order){
+            //     //$product = Product::where('id', $order->product_id)->first();
+            //     $customer = Customer::where('id', $order->customer_id)->first();
+
+            //     //$products->add($product);
+            //     $customers->add($customer);
+            // }
+
+            $totalOrders = count($orders);
+            $pendingOrders = count($pendingOrders);
+            $completedOrders = count($completedOrders);
+            $totalEarned = 0;
+            foreach($orders as $order){
+                $totalEarned += $order->amount;
+            }
+            $recievedPayment = 0;
+            foreach($recievedPayments as $payment){
+                $recievedPayment +=  $payment->amount;
+            }
+            $totalCustomers = count($customers);
+
+            return view('vendor.vendorAdminPanel.home',compact('vendor','totalOrders','pendingOrders','completedOrders','totalEarned','totalCustomers','recievedPayment'));
         }else{
             return redirect()->route('home');
         }

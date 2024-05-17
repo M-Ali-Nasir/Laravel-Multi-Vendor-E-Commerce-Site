@@ -39,6 +39,29 @@
             color: #ffffff;
             font-weight: bold;
         }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+            /* Width of the scrollbar */
+        }
+
+        /* Track (the area around the thumb) */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            /* Color of the track */
+        }
+
+        /* Thumb (the draggable scrolling handle) */
+        ::-webkit-scrollbar-thumb {
+            background: #eaeaea;
+            /* Color of the thumb */
+        }
+
+        /* When hovering over the scrollbar */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #848484;
+            /* Color of the thumb on hover */
+        }
     </style>
     @yield('style')
 </head>
@@ -49,20 +72,15 @@
     <nav class="navbar navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ route('vendorDashboard', ['vendorName' => $vendor->name]) }}">
-                <img src="vendor-pic.jpg" alt="Vendor" width="30" height="30"
-                    class="d-inline-block align-top rounded-circle me-2">
+                <img src="{{ asset($vendor->avatar ? 'Storage/vendor/avatars/' . $customer->avatar : 'Storage/vendor/avatars/default.png') }}"
+                    alt="Vendor" width="30" height="30" class="d-inline-block align-top rounded-circle me-2">
                 <span class="vendor-name">MarketPlace Connect</span>
             </a>
             <div class="d-flex">
-                <form class="d-flex me-4">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-light" type="submit"><i class="fas fa-search"></i></button>
+                <form action="{{ route('logoutVendor') }}" method="post">
+                    @csrf
+                    <button class="nav-link text-light btn"><i class="fas fa-sign-out me-2"></i>Sign-Out</button>
                 </form>
-                <a class="navbar-brand" href="#">
-                    <img src="vendor-pic.jpg" alt="Vendor" width="30" height="30"
-                        class="d-inline-block align-top rounded-circle me-2">
-
-                </a>
             </div>
 
 
@@ -109,11 +127,11 @@
                             href="{{ route('vendorStore', ['vendorName' => $vendor->name]) }}"><i
                                 class="fas fa-store me-2"></i>Store Settings</a>
                     </li>
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="nav-link text-dark"
                             href="{{ route('paymentPage', ['vendorName' => $vendor->name]) }}"><i
                                 class="fas fa-hand-holding-usd me-2"></i>Payment Settings</a>
-                    </li>
+                    </li> --}}
 
                     <hr class="text-dark">
 

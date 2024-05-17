@@ -106,7 +106,7 @@
 
 
 
-                        @if (!empty($paymentMethods))
+                        {{-- @if (!empty($paymentMethods))
                             <!-- Multiple Checkboxes (inline) -->
                             <div class="form-group mb-2">
                                 <label class="col-md-8 mb-1 control-label" for="checkboxes">Select Payment Methods for this
@@ -130,7 +130,7 @@
                                 @enderror
                             </div>
 
-                        @endif
+                        @endif --}}
 
 
 

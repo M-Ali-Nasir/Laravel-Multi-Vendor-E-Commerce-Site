@@ -68,7 +68,7 @@
                             <div class="div-2"></div>
                             <div class="div-3">Total Orders</div>
                             <div class="div-4"></div>
-                            <div class="div-5">350</div>
+                            <div class="div-5">{{ $totalOrders }}</div>
                         </div>
                     </div>
                 </div>
@@ -80,7 +80,7 @@
                             <div class="div-2"></div>
                             <div class="div-3">Completed Orders</div>
                             <div class="div-4"></div>
-                            <div class="div-5">350</div>
+                            <div class="div-5">{{ $completedOrders }}</div>
                         </div>
                     </div>
                 </div>
@@ -92,7 +92,7 @@
                             <div class="div-2"></div>
                             <div class="div-3">Pending Orders</div>
                             <div class="div-4"></div>
-                            <div class="div-5">350</div>
+                            <div class="div-5">{{ $pendingOrders }}</div>
                         </div>
                     </div>
                 </div>
@@ -120,7 +120,7 @@
                             <div class="div-2"></div>
                             <div class="div-3">Total Earned</div>
                             <div class="div-4"></div>
-                            <div class="div-5">350</div>
+                            <div class="div-5">{{ $totalEarned }}</div>
                         </div>
                     </div>
                 </div>
@@ -130,9 +130,9 @@
                     <div class="card-body p-0">
                         <div class="div" style="background-color: #310da7">
                             <div class="div-2"></div>
-                            <div class="div-3">Recieved Payments</div>
+                            <div class="div-3">Received Payments</div>
                             <div class="div-4"></div>
-                            <div class="div-5">350</div>
+                            <div class="div-5">{{ $recievedPayment }}</div>
                         </div>
                     </div>
                 </div>
@@ -142,9 +142,9 @@
                     <div class="card-body p-0">
                         <div class="div" style="background-color: #0d5fa7">
                             <div class="div-2"></div>
-                            <div class="div-3">Pending Payments</div>
+                            <div class="div-3">Total Customers</div>
                             <div class="div-4"></div>
-                            <div class="div-5">350</div>
+                            <div class="div-5">{{ $totalCustomers }}</div>
                         </div>
                     </div>
                 </div>

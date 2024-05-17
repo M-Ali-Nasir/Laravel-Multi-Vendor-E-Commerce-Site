@@ -64,7 +64,7 @@ class ProductController extends Controller
                 'description' => 'required',
                 'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'price' => 'required|numeric|min:0',
-                'paymentMethod' => 'required|array|min:1',
+                // 'paymentMethod' => 'required|array|min:1',
                 'checked_variations' => 'required|array|min:1', // Ensure at least one variation is selected
             ]);
 
@@ -140,9 +140,9 @@ class ProductController extends Controller
                 ]);
             }
 
-            foreach ($request->paymentMethod as $method) {
-                $product->paymentMethods()->attach($method);
-            }
+            // foreach ($request->paymentMethod as $method) {
+            //     $product->paymentMethods()->attach($method);
+            // }
 
             // Check if vendor has authorized Facebook posting
             //$vendor = auth()->guard('vendor')->user(); // Replace with your vendor authentication method
@@ -246,7 +246,7 @@ class ProductController extends Controller
                 'description' => 'required',
                 'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
                 'price' => 'required|numeric|min:0',
-                'paymentMethod' => 'required|array|min:1',
+                //'paymentMethod' => 'required|array|min:1',
                 'checked_variations' => 'required|array|min:1', // Ensure at least one variation is selected
             ]);
 
@@ -307,10 +307,10 @@ class ProductController extends Controller
             }
 
             // Update existing payment methods
-            $product->paymentMethods()->sync($request->paymentMethod);
+            // $product->paymentMethods()->sync($request->paymentMethod);
 
-            // Update payment methods
-            $product->paymentMethods()->sync($request->paymentMethod);
+            // // Update payment methods
+            // $product->paymentMethods()->sync($request->paymentMethod);
 
             return redirect()->route('vendor.productList', ['id' => $vendor->id]);
         } else {
