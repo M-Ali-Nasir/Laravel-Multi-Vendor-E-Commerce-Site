@@ -10,11 +10,11 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Address;
 
-class VendorWelcomeEmail extends Mailable
+class PasswordRestSuccessful extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $user;
+    private $user;
 
     /**
      * Create a new message instance.
@@ -35,7 +35,7 @@ class VendorWelcomeEmail extends Mailable
             replyTo:[
                 new Address('marketplaceconnectofficial@gmail.com', 'Market Place Connect')
             ],
-            subject: 'Welcome To Market Place Connect',
+            subject: 'Password Reset Successful',
         );
     }
 
@@ -45,7 +45,7 @@ class VendorWelcomeEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'vendor.mail.welcomeEmail',
+            view: 'mail.successfulResetPassword',
             with: [
                 'user' => $this->user,
             ],

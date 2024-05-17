@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\VendorWelcomeEmail;
 use Illuminate\Support\Str;
 use App\Mail\VendorActivation;
+use App\Mail\ForgetPassword;
 
 class VendorAuthController extends Controller
 {
@@ -119,5 +120,24 @@ class VendorAuthController extends Controller
             return redirect()->route('activation',['id'=> $vendor->id])->with('error','Session timed out! Retry');
         }
 
+    }
+
+    public function vendorForgetPassword(){
+        $user = "vendor";
+        return view('forgetPassword',compact('user'));
+    }
+    
+    public function vendorForgetPasswordSendMail(Request $request){
+        $validated = $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $user = Vendor::where('email', $validated['email'])->first();
+        if(isset($user)){
+            $usertype = "vendor";
+            Mail::to($validated['email'])->send(new ForgetPassword($usertype, $user));
+            return redirect()->back()->with('success',"Check your Inbox");
+        }
+        return redirect()->back()->with('error',"No user found with this email");
     }
 }

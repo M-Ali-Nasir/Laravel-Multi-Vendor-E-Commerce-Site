@@ -8,10 +8,12 @@
     <title>Customer Login</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" 
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" 
-        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous">
+    </script>
 
 </head>
 
@@ -71,9 +73,12 @@
                         <span style="color: hsl(218, 81%, 75%)">Your Marketplace, Your Success.</span>
                     </h1>
                     <p class="mb-4 opacity-70" style="color: hsl(218, 81%, 85%)">
-                        Welcome to our vibrant multi-vendor marketplace, where shoppers and sellers converge for a seamless 
-                        shopping experience. Whether you're here to explore unique products or showcase your own creations, 
-                        our platform provides a secure and user-friendly environment.Join our community today to discover 
+                        Welcome to our vibrant multi-vendor marketplace, where shoppers and sellers converge for a
+                        seamless
+                        shopping experience. Whether you're here to explore unique products or showcase your own
+                        creations,
+                        our platform provides a secure and user-friendly environment.Join our community today to
+                        discover
                         endless possibilities and unleash your entrepreneurial spirit.
                     </p>
                 </div>
@@ -91,7 +96,7 @@
 
                                 <!-- Email input -->
                                 <div class="form-outline mb-4 text-start">
-                                    <input type="email" id="form3Example3" class="form-control" name="email"/>
+                                    <input type="email" id="form3Example3" class="form-control" name="email" />
                                     <label class="form-label" for="form3Example3">Email address</label>
                                     @error('email')
                                         <div class="text-danger">{{ $message }}</div>
@@ -100,7 +105,7 @@
 
                                 <!-- Password input -->
                                 <div class="form-outline mb-4 text-start">
-                                    <input type="password" id="form3Example4" class="form-control" name="password"/>
+                                    <input type="password" id="form3Example4" class="form-control" name="password" />
                                     <label class="form-label" for="form3Example4">Password</label>
                                     @error('password')
                                         <div class="text-danger">{{ $message }}</div>
@@ -108,10 +113,10 @@
                                 </div>
 
                                 <!-- Checkbox -->
-                                @if($errors->has('error'))
-                                <div class="text-danger mb-2">
-                                    {{ $errors->first('error') }}
-                                </div>
+                                @if ($errors->has('error'))
+                                    <div class="text-danger mb-2">
+                                        {{ $errors->first('error') }}
+                                    </div>
                                 @endif
 
                                 <!-- Submit button -->
@@ -121,7 +126,10 @@
 
                                 <!-- Register buttons -->
                                 <div class="text-center">
-                                    <p>Don't have an account? <a href="{{ route('customerRegister') }}"> <b>Create new account!</b> </a> </p>
+                                    <p>Don't have an account? <a href="{{ route('customerRegister') }}"> <b>Create new
+                                                account!</b> </a> &nbsp; <a
+                                            href="{{ route('userForgetPassword') }}"><b>Forget Password</b></a>
+                                    </p>
                                 </div>
                             </form>
                         </div>

@@ -16,6 +16,10 @@ use App\Models\Vendor\Products\variations;
 use App\Models\User\OrderAddress;
 use App\Models\Vendor\Order;
 use App\Models\Vendor\OrderHistory;
+use App\Mail\UserOrderDone;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\VendorOrderRecieved;
+
 
 class CheckoutController extends Controller
 {
@@ -173,6 +177,15 @@ class CheckoutController extends Controller
             $orderHistory->save();
 
             array_push($orderIds, $newOrder->id); 
+
+
+            $product = Product::where('id', $newOrder->product_id)->first();
+            $toEmail = $customer->email;
+            Mail::to($toEmail)->send(new UserOrderDone($customer, $newOrder, $product));
+            $vendor = Vendor::where('id', $newOrder->vendor_id)->first();
+            $toEmail = $vendor->email;
+            Mail::to($toEmail)->send(new VendorOrderRecieved($customer, $newOrder, $product, $vendor));
+
 
         }
 

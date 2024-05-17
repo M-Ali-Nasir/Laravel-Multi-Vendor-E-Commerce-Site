@@ -20,6 +20,14 @@ use App\Http\Controllers\User\Cart;
 // Home Page
 Route::get('/',[HomeController::class, 'home'])->name('home');
 
+Route::get('/forget_password',[AuthController::class, 'userForgetPassword'])->name('userForgetPassword');
+Route::get('/vendor/forget_password',[VendorAuthController::class, 'vendorForgetPassword'])->name('vendorForgetPassword');
+
+Route::post('/forget-password/send-mail',[AuthController::class, 'forgetPasswordSendMail'])->name('forgetPasswordSendMail');
+Route::post('/vendor/forget-password/send-mail',[VendorAuthController::class, 'vendorForgetPasswordSendMail'])->name('vendorForgetPasswordSendMail');
+Route::get('/reset-password-view/{id}/user/{usertype}',[AuthController::class, 'resetPasswordView'])->name('resetPasswordView');
+Route::post('/resest-password/{id}',[AuthController::class, 'resetPassword'])->name('resetPassword');
+
 //Privacy Policy
 
 Route::get('/privacy-policy',[HomeController::class, 'privayPolicy'])->name('privacyPolicy');
@@ -33,7 +41,7 @@ Route::get('/all-shops',[HomeController::class, 'allShopsPage'])->name('allShops
 
 // single shope page
 Route::get('/shop/{id}',[HomeController::class, 'shopPage'])->name('ShopPage');
-
+Route::get('/shop/{id}/contact/{vendor_id}',[HomeController::class, 'contactVendor'])->name('contactVendor');
 // Customer Home page
 
 Route::get('/home/{customerName}', [AuthController::class, 'customerIndex'])->name('customerIndex');
@@ -56,6 +64,7 @@ Route::get('home/cart/{customerName}',[UserController::class, 'customerCart'])->
 
 //User Cart routes
 Route::get('home/cart/{customerId}/add-product/{productId}',[Cart::class, 'addToCart'])->name('addToCart');
+Route::get('home/cart/{id}/delete-item/{item_id}',[Cart::class, 'deleteCartItem'])->name('deleteCartItem');
 
 
 // Product categories page

@@ -68,6 +68,7 @@
                                     <th scope="col">Quantity</th>
                                     <th scope="col">Price per Item</th>
                                     <th scope="col">Total Price</th>
+                                    <th scope="col">Remove</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -113,6 +114,13 @@
                                                         <p class="mb-0" style="font-weight: 500;" id="totalPrice">
                                                             {{ $item->price * $item->quantity }}
                                                         </p>
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <a class="mb-0 text-decoration-none"
+                                                            href="{{ route('deleteCartItem', ['id' => $customer->id, 'item_id' => $item->id]) }}"
+                                                            style="font-weight: 500; cursor:pointer;">
+                                                            Remove
+                                                        </a>
                                                     </td>
                                                 </tr>
                                                 @php

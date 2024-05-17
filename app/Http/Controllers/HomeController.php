@@ -8,6 +8,8 @@ use App\Models\Vendor\Store;
 use App\Models\Vendor\Vendor;
 use App\Models\Vendor\Products\Product;
 use App\Models\Vendor\Products\Product_categories;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\VendorContact;
 
 class HomeController extends Controller
 {
@@ -72,5 +74,27 @@ class HomeController extends Controller
             $categories = Product_categories::where('vendor_id', $vendor->id)->get();
             return view('vendor.shopPage', compact('store','vendor','products','categories'));
         }
+    }
+
+    public function contactVendor(Request $request, $id,  $vendor_id){
+
+        $validated = $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'subject' => 'required',
+            'message' => 'required',
+        ]);
+
+        $name = $validated['name'];
+        $email = $validated['email'];
+        $subject = $validated['subject'];
+        $usermessage = $validated['message'];
+
+        $vendor = Vendor::where('id', $vendor_id)->first();
+        $toEmail = $vendor->email;
+        Mail::to($toEmail)->send(new VendorContact($name , $email , $subject , $usermessage , $vendor));
+
+        return redirect()->back()->with('success','Email sent Successfully');
+
     }
 }

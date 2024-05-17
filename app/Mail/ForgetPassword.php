@@ -9,19 +9,23 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Address;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Session;
 
-class VendorWelcomeEmail extends Mailable
+class ForgetPassword extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $user;
+    private $usertype;
+    private $user;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($user)
+    public function __construct($usertype, $user)
     {
         //
+        $this->usertype = $usertype;
         $this->user = $user;
     }
 
@@ -35,7 +39,7 @@ class VendorWelcomeEmail extends Mailable
             replyTo:[
                 new Address('marketplaceconnectofficial@gmail.com', 'Market Place Connect')
             ],
-            subject: 'Welcome To Market Place Connect',
+            subject: 'Forget Password',
         );
     }
 
@@ -44,10 +48,27 @@ class VendorWelcomeEmail extends Mailable
      */
     public function content(): Content
     {
+        // Encrypt the necessary data
+        $user_id = Crypt::encryptString(json_encode([
+            'id' => $this->user['id'],
+        ]));
+
+        $userType = Crypt::encryptString(json_encode([
+            'usertype' => $this->usertype,
+        ]));
+
+        // Generate the URL
+        $url = route('resetPasswordView', ['id' => $user_id, 'usertype' => $userType]);
+
+        Session::put('resetRoute','true');
+
+
         return new Content(
-            view: 'vendor.mail.welcomeEmail',
+            view: 'mail.resetpassword',
             with: [
+                'usertype' => $this->usertype,
                 'user' => $this->user,
+                'url' => $url,
             ],
         );
     }

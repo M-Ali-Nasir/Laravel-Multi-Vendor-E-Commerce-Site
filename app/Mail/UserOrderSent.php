@@ -10,19 +10,23 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Address;
 
-class VendorWelcomeEmail extends Mailable
+class UserOrderSent extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $user;
+    private $order;
+    private $customer;
+    private $product;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($user)
+    public function __construct($customer, $order, $product)
     {
         //
-        $this->user = $user;
+        $this->customer = $customer;
+        $this->order = $order;
+        $this->product = $product;
     }
 
     /**
@@ -35,7 +39,7 @@ class VendorWelcomeEmail extends Mailable
             replyTo:[
                 new Address('marketplaceconnectofficial@gmail.com', 'Market Place Connect')
             ],
-            subject: 'Welcome To Market Place Connect',
+            subject: 'Order Sent',
         );
     }
 
@@ -45,9 +49,11 @@ class VendorWelcomeEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'vendor.mail.welcomeEmail',
+            view: 'user.emails.orderSent',
             with: [
-                'user' => $this->user,
+                'customer' => $this->customer,
+                'order' => $this->order,
+                'product' => $this->product,
             ],
         );
     }

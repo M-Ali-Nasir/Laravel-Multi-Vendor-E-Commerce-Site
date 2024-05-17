@@ -17,6 +17,8 @@ use Illuminate\Support\Collection;
 use App\Models\Vendor\Products\Variations;
 use App\Models\User\OrderAddress;
 use App\Models\Vendor\OrderHistory;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UserOrderSent;
 
 class VendorController extends Controller
 {
@@ -379,6 +381,13 @@ class VendorController extends Controller
         $order->status = "Completed";
 
         $order->save();
+
+        $order= Order::where('id', $order_id)->first();
+        $customer = Customer::where('id', $order->customer_id)->first();
+        $product = Product::where('id', $order->product_id)->first();
+        $toEmail = $customer->email;
+        Mail::to($toEmail)->send(new UserOrderSent($customer, $order, $product));
+
 
         return redirect()->route('orderDetails',['id' => $vendor->id])->with('success','Order Completed Successfully');
     }

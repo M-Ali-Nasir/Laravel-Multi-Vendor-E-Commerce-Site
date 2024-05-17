@@ -13,8 +13,14 @@ use App\Models\User\OrderAddress;
 use App\Models\Vendor\Order;
 use App\Models\Vendor\OrderHistory;
 use Illuminate\Support\Str;
+use App\Models\Vendor\Vendor;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UserWelcomeEmail;
+use App\Mail\UserOrderDone;
+use App\Mail\VendorOrderRecieved;
+
 
 
 class UserController extends Controller
@@ -167,6 +173,7 @@ class UserController extends Controller
                 
                $orderids = [];
 
+               
                 foreach($cartItems as $item){
                     $newOrder = new Order();
                     $newOrder->vendor_id = $item->vendor_id;
@@ -186,6 +193,15 @@ class UserController extends Controller
 
                     array_push($orderids, $newOrder->id);
 
+                    $product = Product::where('id', $newOrder->product_id)->first();
+                    $toEmail = $customer->email;
+                    Mail::to($toEmail)->send(new UserOrderDone($customer, $newOrder, $product));
+                    $vendor = Vendor::where('id', $newOrder->vendor_id)->first();
+                    $toEmail = $vendor->email;
+                    Mail::to($toEmail)->send(new VendorOrderRecieved($customer, $newOrder, $product, $vendor));
+
+
+
                 }
 
                 
@@ -196,6 +212,10 @@ class UserController extends Controller
                     $address->save();
         
                 }
+
+                
+
+
 
 
                 Cart::where('customer_id', $customer->id)->delete();

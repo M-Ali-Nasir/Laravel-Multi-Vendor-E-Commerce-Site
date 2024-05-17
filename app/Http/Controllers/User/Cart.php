@@ -10,6 +10,7 @@ use App\Models\Vendor\Products\Product;
 use App\Models\Vendor\Vendor;
 use App\Models\Vendor\Store;
 use App\Models\Vendor\Products\Variations;
+use Illuminate\Support\Facades\Session;
 
 
 class Cart extends Controller
@@ -47,5 +48,15 @@ class Cart extends Controller
         //     echo($customer);
         //     echo($request);
         // }
+    }
+
+    public function deleteCartItem($id, $item_id){
+        if(session::has('customer')){
+            $customer = Customer::where('id', $id)->first();
+            $cartItem = UserCart::where('id', $item_id)->first();
+            $cartItem->delete();
+
+            return redirect()->route('customerCart',['customerName',$customer->id])->with('success','Item removed from cart successfully');
+        }
     }
 }

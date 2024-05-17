@@ -48,6 +48,10 @@ class VendorActivation extends Mailable
     {
         return new Content(
             view: 'vendor.mail.activationCode',
+            with: [
+                'vendor' => $this->vendor,
+                'pin' => $this->pin,
+            ],
         );
     }
 
