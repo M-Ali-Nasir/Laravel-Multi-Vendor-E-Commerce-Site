@@ -89,19 +89,30 @@ class AuthController extends Controller
             $customer = Session::get('customer');
             $customer = Customer::where('id', $customer->id)->first();
 
-            $allcategories = Product_categories::all();
+            $searchQuery = $request->input('search');
 
-            $searchQuery = Session::get('searchQuery');
             
-            // Initialize the query builder for products
-            $productsQuery = Product::with('variations', 'paymentMethods');
+            
+            $vendors = Vendor::where('status', 'active');
 
-            $storesQuery = Store::query();
-            $categoriesQuery = Product_categories::query();
+            $activeVendorIds = vendor::where('status', 'active')->pluck('id')->toArray();
+            $storesIds = Store::whereIn('vendor_id', $activeVendorIds)->pluck('id')->toArray();
+            // Retrieve orders for the vendor with pending status
+            $storesQuery = Store::whereIn('vendor_id', $activeVendorIds);
+
+
+
+            // Initialize the query builder for products
+            $productsQuery = Product::with('variations', 'paymentMethods')->whereIn('store_id', $storesIds);
+
+            
+            $categoriesQuery = Product_categories::whereIn('vendor_id', $activeVendorIds);
+
+            $allcategories = Product_categories::whereIn('vendor_id', $activeVendorIds)->get();
             // If there's a search query, apply filters
             if ($searchQuery) {
-                $productsQuery->where('name', 'like', '%' . $searchQuery . '%')->orWhere('description', 'like', '%' . $searchQuery . '%');
-                $storesQuery->where('name', 'like', '%' . $searchQuery . '%')->orWhere('description', 'like', '%' . $searchQuery . '%');
+                $productsQuery->where('name', 'like', '%' . $searchQuery . '%');
+                $storesQuery->where('name', 'like', '%' . $searchQuery . '%');
                 $categoriesQuery->where('name', 'like', '%' . $searchQuery . '%');
             }
 
@@ -111,7 +122,6 @@ class AuthController extends Controller
             // Get all stores, categories, and vendors
             $stores = $storesQuery->get();
             $categories = $categoriesQuery->get();
-            $vendors = Vendor::all();
 
             return view('user.home', compact('customer','stores','products','categories','vendors', 'searchQuery','allcategories'));
         }else{

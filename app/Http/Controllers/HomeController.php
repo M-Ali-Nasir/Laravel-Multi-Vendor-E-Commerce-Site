@@ -32,21 +32,35 @@ class HomeController extends Controller
 
         if (Session::has('customer')) {
             $customer = Session::get('customer');
-            $searchQuery = $request->search;
+            $searchQuery = $request->input('search');
             return redirect()->route('customerIndex', ['customerName' => $customer->id])->with('searchQuery', $searchQuery);
         } else {
             // Get the search query
             $searchQuery = $request->input('search');
-            
-            // Initialize the query builder for products
-            $productsQuery = Product::with('variations', 'paymentMethods');
 
-            $storesQuery = Store::query();
-            $categoriesQuery = Product_categories::query();
+            
+            
+            $vendors = Vendor::where('status', 'active');
+
+            $activeVendorIds = vendor::where('status', 'active')->pluck('id')->toArray();
+            $storesQuery = Store::whereIn('vendor_id', $activeVendorIds);
+            // Retrieve orders for the vendor with pending status
+            $storeIds= $storesQuery ->pluck('id')->toArray();
+            //$storesQuery = Store::whereIn('vendor_id', $activeVendorIds);
+
+            
+
+            // Initialize the query builder for products
+            $productsQuery = Product::whereIn('store_id', $storeIds)->with('variations', 'paymentMethods');
+
+            
+            $categoriesQuery = Product_categories::whereIn('vendor_id', $activeVendorIds);
+
+            $allcategories = Product_categories::whereIn('vendor_id', $activeVendorIds)->get();
             // If there's a search query, apply filters
             if ($searchQuery) {
-                $productsQuery->where('name', 'like', '%' . $searchQuery . '%')->orWhere('description', 'like', '%' . $searchQuery . '%');
-                $storesQuery->where('name', 'like', '%' . $searchQuery . '%')->orWhere('description', 'like', '%' . $searchQuery . '%');
+                $productsQuery->where('name', 'like', '%' . $searchQuery . '%');
+                $storesQuery->where('name', 'like', '%' . $searchQuery . '%');
                 $categoriesQuery->where('name', 'like', '%' . $searchQuery . '%');
             }
 
@@ -56,13 +70,14 @@ class HomeController extends Controller
             // Get all stores, categories, and vendors
             $stores = $storesQuery->get();
             $categories = $categoriesQuery->get();
-            $vendors = Vendor::all();
-
+            
+            //dd($products);
             
             
 
             return view('user.home', compact('stores', 'products', 'categories', 'vendors', 'searchQuery','allcategories'));
         }
+
     }
 
     public function privayPolicy(){
@@ -86,14 +101,20 @@ class HomeController extends Controller
 
     public function allShopsPage()
     {
+        
+            $vendors = Vendor::where('status', 'active');
+
+            $activeVendorIds = vendor::where('status', 'active')->pluck('id')->toArray();
+            $storesIds = Store::whereIn('vendor_id', $activeVendorIds)->pluck('id')->toArray();
+
+            $allcategories = Product_categories::whereIn('vendor_id', $activeVendorIds)->get();
+            $stores = Store::whereIn('vendor_id', $activeVendorIds)->get();
+
         if (Session::has('customer')) {
             $customer = Session::get('customer');
-            $allcategories = Product_categories::all();
-            $stores = Store::all();
+            $customer = Customer::where('id', $customer->id)->first();
             return view('allShops', compact('customer','stores','allcategories'));
         } else {
-            $stores = Store::all();
-            $allcategories = Product_categories::all();
             return view('allShops',compact('stores','allcategories'));
         }
     }

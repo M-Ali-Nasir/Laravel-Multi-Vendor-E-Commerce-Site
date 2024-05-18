@@ -43,9 +43,11 @@
 
      @include('components.home.allProducts')
  @else
-     <div class="container mt-5 mb-5 d-flex justify-content-center">
-         <h6>Search Results : 0</h6>
-     </div>
+     @if ($searchQuery != '')
+         <div class="container mt-5 mb-5 d-flex justify-content-center">
+             <h6>Search Results : {{ $totalSearch }}</h6>
+         </div>
+     @endif
  @endif
 
 

@@ -23,39 +23,22 @@
                 @foreach ($categories as $category)
                     <div class="card swiper-slide">
 
-                        <div class="card c-card text-dark card-has-bg click-col"
-                            style="background-image:url('{{ asset('storage/vendor/products/category/images/' . $category->image) }}'); background-size:cover;">
-                            <img class="card-img d-none" src="https://source.unsplash.com/600x900/?tech,street"
-                                alt="Creative Manner Design Lorem Ipsum Sit Amet Consectetur dipisi?">
-                            <div class="card-img-overlay d-flex flex-column">
-                                <div class="card-body">
-                                    <small class="card-meta mb-2">Category:</small>
-                                    <h4 class="card-title mt-0 "><a class="text-dark" herf="https://creativemanner.com">
-                                            {{ $category->name }}</a></h4>
-                                    <small><i class="far fa-clock"></i>Created at:
-                                        {{ \Carbon\Carbon::parse($category->created_at)->format('F d, Y') }}</small>
-                                </div>
-                                <div class="card-footer">
-                                    <div class="media">
-                                        <img class="mr-3 rounded-circle"
-                                            src="{{ asset('storage/vendor/avatars/default.png') }}"
-                                            alt="Generic placeholder image" style="max-width:50px">
-                                        <div class="media-body">
-                                            <h6 class="my-0 text-dark d-block">
+                        <div class="col-md-12">
+                            <a class="text-dark" href="{{ route('categoryPage', ['id' => $category->id]) }}"
+                                data-abc="true">
+                                <div class="product-wrapper mb-45 text-center">
+                                    <img src="{{ asset('storage/vendor/products/category/images/' . $category->image) }}"
+                                        alt="category-image" style="background-size:cover; width:100%;">
+                                    <div class="product-action">
+                                        <div class="product-action-style w-100">
 
+                                            {{ $category->name }}
 
-                                                {{ $vendor->name }}
-
-                                            </h6>
-                                            <small>
-
-                                                {{ $store->name }}
-
-                                            </small>
                                         </div>
                                     </div>
+
                                 </div>
-                            </div>
+                            </a>
                         </div>
 
                     </div>
