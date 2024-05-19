@@ -27,8 +27,8 @@
                             @endif
 
                             <h5 class="my-3">{{ $vendor->name }}</h5>
-                            <p class="text-muted mb-1">Store-Name</p>
-                            <p class="text-muted mb-4">Store Address</p>
+                            <p class="text-muted mb-1">{{ $store ? $store->name : 'No store created yet' }}</p>
+                            <p class="text-muted mb-4">{{ $store ? $store->slogan : 'Create your store' }}</p>
                             <div class=" justify-content-center mb-2">
                                 @if ($vendor->status == 'inactive')
                                     <p class="text-warning p-0 m-0">Your account is inactive.</p>

@@ -1,4 +1,4 @@
-@if (count($categories) != 0)
+@if (isset($categories))
     <figure class="text-center mt-5">
         <blockquote class="blockquote">
             <p>Shop Our Extensive Range of Categories</p>

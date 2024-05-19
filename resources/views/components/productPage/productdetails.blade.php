@@ -98,12 +98,12 @@
                         @if (Session::has('customer'))
                             <button class="btn btn-primary mt-3" type="submit" id="cartBtn1">
                                 Add to cart
-                                <i class="fas fa-shopping-cart ms-1"></i>
+                                <i class="fas fa-shopping-cart ms-1" id="cartBtn1"></i>
                             </button>
                         @else
                             <a class="btn btn-primary mt-3" href="{{ route('customerLogin') }}" id="cartBtn2">
                                 Sign In to add into cart
-                                <i class="fas fa-shopping-cart ms-1"></i>
+                                <i class="fas fa-shopping-cart ms-1" id="cartBtn2"></i>
                             </a>
                         @endif
 
@@ -121,12 +121,10 @@
         <!--Grid row-->
         <div class="row d-flex justify-content-center">
             <!--Grid column-->
-            <div class="col-md-6 text-center">
-                <h4 class="my-4 h4">Additional information</h4>
+            <div class="col-md-10 text-center">
+                <h4 class="my-4 h4">{{ $store->name }}</h4>
 
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus suscipit modi sapiente illo soluta
-                    odit voluptates, quibusdam officia. Neque quibusdam quas a quis porro? Molestias illo neque eum in
-                    laborum.</p>
+                <p>{{ $store->description }}</p>
             </div>
             <!--Grid column-->
         </div>
@@ -141,7 +139,7 @@
             @endif
             <div class="col-lg-4 col-md-12 mb-4 p-5">
                 <img src="{{ asset('storage/vendor/products/images/' . $variation->pivot->image) }}"
-                    class="img-fluid" alt="" />
+                    class="img-fluid" alt="product-image" />
             </div>
         @endforeach
 

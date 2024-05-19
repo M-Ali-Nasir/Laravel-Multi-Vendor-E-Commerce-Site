@@ -47,14 +47,14 @@
                     @if (Session::has('success'))
                         <div class="d-flex align-text-center justify-content-center">
                             <div class="col-md-4 alert alert-success alert-dismissible text center fade show">
-                                <strong>Order Completed!</strong> {{ Session::get('success') }}
+                                <strong>Success!</strong> {{ Session::get('success') }}
                             </div>
                         </div>
                     @endif
                     @if (Session::has('error'))
                         <div class="d-flex align-text-center justify-content-center">
                             <div class="col-md-4 alert alert-danger alert-dismissible text center fade show">
-                                <strong>Order Completed!</strong> {{ Session::get('error') }}
+                                <strong>Error!</strong> {{ Session::get('error') }}
                             </div>
                         </div>
                     @endif

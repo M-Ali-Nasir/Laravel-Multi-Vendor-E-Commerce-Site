@@ -11,23 +11,14 @@ use App\Models\Vendor\Products\Product_categories;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\VendorContact;
 use App\Models\User\Customer;
+use App\Models\User\Cart;
 
 class HomeController extends Controller
 {
     //
 
     public function home(Request $request){
-        // if(Session::has('customer')){
-        //     $customer= Session::get('customer');
-            
-        //     return redirect()->route('customerIndex',['customerName' => $customer->name]);
-        // }else{
-        //     $stores = Store::all();
-        //     $categories = Product_categories::all();
-        //     $products = Product::with('variations','paymentMethods')->get();
-        //     $vendors = Vendor::all();
-        //     return view('user.home', compact('stores','products','categories','vendors'));
-        // }
+        
         $allcategories = Product_categories::all();
 
         if (Session::has('customer')) {
@@ -91,7 +82,13 @@ class HomeController extends Controller
             $customer = Session::get('customer');
             $allcategories = Product_categories::all();
 
-            return view('about', compact('customer','allcategories'));
+            $cartAmount =0;
+            $totalcart = Cart::where('customer_id', $customer->id)->get();
+            foreach ($totalcart as $key => $number) {
+                $cartAmount++;
+            }
+
+            return view('about', compact('customer','allcategories','cartAmount'));
         } else {
             $allcategories = Product_categories::all();
 
@@ -113,7 +110,13 @@ class HomeController extends Controller
         if (Session::has('customer')) {
             $customer = Session::get('customer');
             $customer = Customer::where('id', $customer->id)->first();
-            return view('allShops', compact('customer','stores','allcategories'));
+
+            $cartAmount =0;
+            $totalcart = Cart::where('customer_id', $customer->id)->get();
+            foreach ($totalcart as $key => $number) {
+                $cartAmount++;
+            }
+            return view('allShops', compact('customer','stores','allcategories','cartAmount'));
         } else {
             return view('allShops',compact('stores','allcategories'));
         }
@@ -167,8 +170,14 @@ class HomeController extends Controller
         if (Session::has('customer')) {
             $customer = Session::get('customer');
             $customer = Customer::where('id', $customer->id)->first();
+
+            $cartAmount =0;
+            $totalcart = Cart::where('customer_id', $customer->id)->get();
+            foreach ($totalcart as $key => $number) {
+                $cartAmount++;
+            }
         
-            return view('vendor.shopPage', compact('customer', 'store', 'vendor', 'products', 'categories', 'searchQuery','allcategories'));
+            return view('vendor.shopPage', compact('customer', 'store', 'vendor', 'products', 'categories', 'searchQuery','cartAmount','allcategories'));
         }else{
             return view('vendor.shopPage', compact('store', 'vendor', 'products', 'categories', 'searchQuery','allcategories'));
         }
@@ -209,8 +218,14 @@ class HomeController extends Controller
         if (Session::has('customer')) {
             $customer = Session::get('customer');
             $customer = Customer::where('id', $customer->id)->first();
+
+            $cartAmount =0;
+            $totalcart = Cart::where('customer_id', $customer->id)->get();
+            foreach ($totalcart as $key => $number) {
+                $cartAmount++;
+            }
         
-            return view('category', compact('category','customer', 'store', 'vendor', 'products','allcategories'));
+            return view('category', compact('category','customer', 'store', 'vendor', 'products','allcategories','<cartAmount></cartAmount>'));
         }else{
             return view('category', compact('category','store', 'vendor', 'products','allcategories'));
         }

@@ -1,6 +1,6 @@
 @extends('user.userHome')
 
-@section('title', 'About')
+@section('title', 'Shop')
 
 @section('search_placeholder', 'Search Products/Categories')
 
@@ -39,9 +39,11 @@
         @include('components.shoppage.categories')
         @include('components.shoppage.products')
     @else
-        <div class="container mt-5 mb-5 d-flex justify-content-center">
-            <h6>Search Results : 0</h6>
-        </div>
+        @if ($searchQuery)
+            <div class="container mt-5 mb-5 d-flex justify-content-center">
+                <h6>Search Results : {{ $totalSearch }}</h6>
+            </div>
+        @endif
     @endif
 
 

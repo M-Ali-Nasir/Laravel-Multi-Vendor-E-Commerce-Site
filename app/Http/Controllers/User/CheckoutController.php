@@ -33,7 +33,12 @@ class CheckoutController extends Controller
             $customer = Session::get('customer');
             $customer = Customer::where('id', $customer->id)->first();
             $orderAddress = OrderAddress::where('customer_id', $customer->id)->first();
-            return view('user.checkout', compact('customer','orderAddress','allcategories'));
+            $cartAmount =0;
+            $totalcart = Cart::where('customer_id', $customer->id)->get();
+            foreach ($totalcart as $key => $number) {
+                $cartAmount++;
+            }
+            return view('user.checkout', compact('customer','orderAddress','allcategories','cartAmount'));
         }
         else{
             return redirect()->route('customerLogin');

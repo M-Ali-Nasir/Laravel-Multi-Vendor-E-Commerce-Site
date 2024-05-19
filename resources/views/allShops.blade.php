@@ -62,9 +62,9 @@
                             <div class="col-md-2 mb-4 text-center">
                                 <a href="{{ route('ShopPage', ['id' => $store->id]) }}"
                                     class="text-decoration-none text-dark">
-                                    <div class="card position-relative">
+                                    <div class="card position-relative" style="height: 100px;">
                                         <img src="{{ asset('storage/vendor/store/banner/' . $store->banner) }}"
-                                            class="card-img" alt="...">
+                                            class="card-img h-100" alt="...">
                                         <div class="card-img-overlay d-flex align-items-center justify-content-center">
                                             <h5 class="card-title text-center text-white">{{ $store->name }}</h5>
                                         </div>

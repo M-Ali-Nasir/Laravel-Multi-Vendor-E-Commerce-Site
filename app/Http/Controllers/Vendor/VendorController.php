@@ -55,10 +55,19 @@ class VendorController extends Controller
                 ->get();
 
 
+            
+
 
             $recievedPayments = Order::where('vendor_id', $vendor->id)
+            
+            ->WhereIn('id', $completedOrderIds)
             ->where('payment_method', 'Card')
-            ->orWhereIn('id', $completedOrderIds)
+            ->get();
+
+
+            $pendingPayments = Order::where('vendor_id', $vendor->id)
+            ->where('payment_method', 'Cash on Delivery')
+            ->WhereIn('id', $pendingOrderIds)
             ->get();
 
 
@@ -84,9 +93,13 @@ class VendorController extends Controller
             foreach($recievedPayments as $payment){
                 $recievedPayment +=  $payment->amount;
             }
+            $pendingPayment = 0;
+            foreach($pendingPayments as $payment){
+                $pendingPayment +=  $payment->amount;
+            }
             $totalCustomers = count($customers);
 
-            return view('vendor.vendorAdminPanel.home',compact('vendor','totalOrders','pendingOrders','completedOrders','totalEarned','totalCustomers','recievedPayment'));
+            return view('vendor.vendorAdminPanel.home',compact('vendor','totalOrders','pendingOrders','completedOrders','totalEarned','totalCustomers','recievedPayment','pendingPayment'));
         }else{
             return redirect()->route('home');
         }
@@ -97,7 +110,8 @@ class VendorController extends Controller
         if(Session::has('vendor')){
             $vendor = Session::get('vendor');
             $vendor = Vendor::where('id', $vendor->id)->first();
-            return view('vendor.vendorAdminPanel.profile',compact('vendor'));
+            $store = Store::where('vendor_id',$vendor->id)->first();
+            return view('vendor.vendorAdminPanel.profile',compact('vendor','store'));
         }else{
             return redirect()->route('home');
         }
@@ -184,7 +198,7 @@ class VendorController extends Controller
                 'productSubHeading' => 'required|max:50',
                 'categoriesHeading' => 'required|max:50',
                 'categoriesSubHeading' => 'required|max:50',
-                'banner' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'banner' => 'required|image:jpeg,png,jpg,gif|max:5120',
             ]);
 
             $store = new Store();
@@ -202,6 +216,22 @@ class VendorController extends Controller
             $store['c-heading'] = $validated['categoriesHeading'];
             $store['c-subheading'] = $validated['categoriesSubHeading'];
             $store->vendor_id = $id;
+
+            // $store = new Store();
+            // $store->name = $request->name;
+            // $store->phone = $request->phone;
+            // $store->slogan = $request->slogan;
+            // $store->description = $request->description;
+            // $store->address = $request->address;
+            // $store['opening-day'] = $request->openingDay;
+            // $store['opening-time'] = $request->openingTime;
+            // $store['closing-day'] = $request->closingDay;
+            // $store['closing-time'] = $request->closingTime;
+            // $store['p-heading'] = $request->productHeading;
+            // $store['p-subheading'] = $request->productSubHeading;
+            // $store['c-heading'] = $request->categoriesHeading;
+            // $store['c-subheading'] = $request->categoriesSubHeading;
+            // $store->vendor_id = $id;
 
 
             if ($request->hasFile('banner')) {
@@ -262,7 +292,7 @@ class VendorController extends Controller
                 'productSubHeading' => 'required|max:50',
                 'categoriesHeading' => 'required|max:50',
                 'categoriesSubHeading' => 'required|max:50',
-                'banner' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'banner' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120',
             ]);
 
             

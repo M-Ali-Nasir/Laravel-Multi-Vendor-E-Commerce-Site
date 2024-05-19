@@ -1,4 +1,4 @@
-@if (count($products) != 0)
+@if (isset($products))
     <figure class="text-center mt-5">
         <blockquote class="blockquote">
             <p>

@@ -13,6 +13,7 @@ use App\Models\Vendor\Store;
 use App\Models\Vendor\PaymentMethod;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Vendor\FacebookAuthorization;
+use App\Models\User\Cart;
 
 class ProductController extends Controller
 {
@@ -24,14 +25,24 @@ class ProductController extends Controller
             $customerId = $customer->id;
             $allcategories = Product_categories::all();
 
+            $cartAmount =0;
+            $totalcart = Cart::where('customer_id', $customer->id)->get();
+            foreach ($totalcart as $key => $number) {
+                $cartAmount++;
+            }
+            
+
             $product = Product::where('id', $product_id)->with('paymentMethods','variations')->first();
-            return view('product', compact('customer','product','customerId','allcategories'));
+            $store = Store::where('id', $product->store_id)->first();
+            
+            return view('product', compact('customer','product','customerId','allcategories','cartAmount','store'));
         } else {
             $product = Product::where('id', $product_id)->with('paymentMethods','variations')->first();
             $customerId = 0;
             $allcategories = Product_categories::all();
+            $store = Store::where('id', $product->store_id)->first();
 
-            return view('product',compact('product','customerId','allcategories'));
+            return view('product',compact('product','customerId','allcategories','store'));
         }
     }
 
@@ -58,7 +69,7 @@ class ProductController extends Controller
             $vendor = Vendor::where('id', $vendor->id)->first();
             $storeId = $id;
             
-            $request->validate([
+            $validated = $request->validate([
                 'name' => 'required',
                 'category' => 'required|exists:product_categories,id',
                 'description' => 'required',
@@ -67,6 +78,12 @@ class ProductController extends Controller
                 // 'paymentMethod' => 'required|array|min:1',
                 'checked_variations' => 'required|array|min:1', // Ensure at least one variation is selected
             ]);
+
+            //dd($validated['checked_variations']);
+
+            if($validated['checked_variations'][0] == null){
+                return redirect()->back()->with('error','Select Atleast One Variation');
+            }
 
             //dd($request->paymentMethod);
 
@@ -240,7 +257,7 @@ class ProductController extends Controller
             $vendor = Vendor::where('id', $vendor->id)->first();
             $storeId = $id;
 
-            $request->validate([
+            $validated = $request->validate([
                 'name' => 'required',
                 'category' => 'required|exists:product_categories,id',
                 'description' => 'required',
@@ -324,8 +341,9 @@ class ProductController extends Controller
             $store = Store::where('id', $id)->first();
             $product = Product::where('id', $product_id)->with('paymentMethods', 'variations')->first();
 
+            
             $product->variations()->detach();
-
+        
             $product->paymentMethods()->detach();
 
             $product->delete();
@@ -395,7 +413,7 @@ class ProductController extends Controller
 
             if ($request->hasFile('image')) {
                 if ($category->image) {
-                    Storage::delete('public/vendor/products/category/images/' . $product->image);
+                    Storage::delete('public/vendor/products/category/images/' . $category->image);
                 }
                 // Upload new profile picture
                 $profilePic = $request->file('image');

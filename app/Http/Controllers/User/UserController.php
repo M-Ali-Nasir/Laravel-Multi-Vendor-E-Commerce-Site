@@ -41,7 +41,13 @@ class UserController extends Controller
 
                 $products->add($product);
             }
-            return view('user.userProfile', compact('customer','orders','products','allcategories'));
+
+            $cartAmount =0;
+            $totalcart = Cart::where('customer_id', $customer->id)->get();
+            foreach ($totalcart as $key => $number) {
+                $cartAmount++;
+            }
+            return view('user.userProfile', compact('customer','orders','products','allcategories','cartAmount'));
         }
     }
 
@@ -94,7 +100,13 @@ class UserController extends Controller
             $userCart = Cart::where('customer_id', $customer->id)->get();
             $products = Product::with('paymentMethods')->get();
             $categories = Product_categories::all();
-            return view('user.userCart', compact('customer','userCart','products','categories','allcategories'));
+
+            $cartAmount =0;
+            $totalcart = Cart::where('customer_id', $customer->id)->get();
+            foreach ($totalcart as $key => $number) {
+                $cartAmount++;
+            }
+            return view('user.userCart', compact('customer','userCart','products','categories','allcategories','cartAmount'));
         }
     }
 

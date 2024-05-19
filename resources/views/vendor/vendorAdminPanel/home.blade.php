@@ -46,12 +46,30 @@
 @section('mainBody')
 
 
-    <div class="p-4">
-        <h3>Welcome {{ $vendor->name }} to your Dashboard</h3>
+    <div class="pt-4">
+        <h3>Welcome {{ $vendor->name }}!</h3>
         <!-- Add your main content here -->
     </div>
 
     {{-- Order Details --}}
+    @if ($vendor->status != 'active')
+        <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                <use xlink:href="#check-circle-fill" />
+            </svg>
+            <strong>Alert!</strong>&nbsp;Your store is inactive
+
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    {{-- <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+            <use xlink:href="#check-circle-fill" />
+        </svg>
+        <strong>Alert!</strong>&nbsp;Your store is not connected with Facebook
+
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div> --}}
 
     <div class="mt-5">
         <h4>Orders Detail:</h4>
@@ -61,10 +79,10 @@
 
 
         <div class="row justify-content-center">
-            <div class="col-md-4 mb-1">
+            <div class="col-md-4 mb-">
                 <div class="card text-center border-0">
                     <div class="card-body p-0">
-                        <div class="div" style="background-color: #0d82a7">
+                        <div class="div rounded-3  shadow-lg" style="background-color: #0d82a7">
                             <div class="div-2"></div>
                             <div class="div-3">Total Orders</div>
                             <div class="div-4"></div>
@@ -76,7 +94,7 @@
             <div class="col-md-4 mb-1">
                 <div class="card text-center border-0">
                     <div class="card-body p-0">
-                        <div class="div" style="background-color: #0da771">
+                        <div class="div rounded-3  shadow-lg" style="background-color: #0da771">
                             <div class="div-2"></div>
                             <div class="div-3">Completed Orders</div>
                             <div class="div-4"></div>
@@ -88,7 +106,7 @@
             <div class="col-md-4 mb-1">
                 <div class="card text-center border-0">
                     <div class="card-body p-0">
-                        <div class="div" style="background-color: #a75d0d">
+                        <div class="div rounded-3  shadow-lg" style="background-color: #a75d0d">
                             <div class="div-2"></div>
                             <div class="div-3">Pending Orders</div>
                             <div class="div-4"></div>
@@ -116,7 +134,7 @@
             <div class="col-md-4 mb-1">
                 <div class="card text-center border-0">
                     <div class="card-body p-0">
-                        <div class="div" style="background-color: #a70d64">
+                        <div class="div rounded-3  shadow-lg" style="background-color: #a70d64">
                             <div class="div-2"></div>
                             <div class="div-3">Total Earned</div>
                             <div class="div-4"></div>
@@ -128,11 +146,11 @@
             <div class="col-md-4 mb-1">
                 <div class="card text-center border-0">
                     <div class="card-body p-0">
-                        <div class="div" style="background-color: #310da7">
+                        <div class="div rounded-3  shadow-lg" style="background-color: #310da7">
                             <div class="div-2"></div>
-                            <div class="div-3">Received Payments</div>
+                            <div class="div-3">Pending Payments</div>
                             <div class="div-4"></div>
-                            <div class="div-5">{{ $recievedPayment }}</div>
+                            <div class="div-5">{{ $pendingPayment }}</div>
                         </div>
                     </div>
                 </div>
@@ -140,7 +158,7 @@
             <div class="col-md-4 mb-1">
                 <div class="card text-center border-0">
                     <div class="card-body p-0">
-                        <div class="div" style="background-color: #0d5fa7">
+                        <div class="div rounded-3  shadow-lg" style="background-color: #0d5fa7">
                             <div class="div-2"></div>
                             <div class="div-3">Total Customers</div>
                             <div class="div-4"></div>

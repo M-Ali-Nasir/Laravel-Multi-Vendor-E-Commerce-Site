@@ -45,6 +45,18 @@
                     <use xlink:href="#check-circle-fill" />
                 </svg>
                 <strong>Congratulations!</strong> {{ Session::get('success') }}
+                <a href="{{ route('vendor.facebook.connect') }}" class="btn btn-primary">Connect</a>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if (Session::has('error'))
+            <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                    <use xlink:href="#check-circle-fill" />
+                </svg>
+                <strong>Error!</strong> {{ Session::get('error') }}
+
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
@@ -159,7 +171,8 @@
                         <div class="form-group mb-2">
                             <label class="col-md-4 control-label" for="description">Description</label>
                             <div class="col-md-8">
-                                <textarea class="form-control" id="description" name="description" placeholder="beriefly write about the product"></textarea>
+                                <textarea class="form-control" id="description" name="description" placeholder="beriefly write about the product"
+                                    maxlength="1000"></textarea>
                                 @error('description')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror

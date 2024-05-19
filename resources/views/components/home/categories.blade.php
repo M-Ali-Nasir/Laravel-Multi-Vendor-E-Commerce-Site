@@ -32,9 +32,9 @@
                         <div class="col-md-12">
                             <a class="text-dark" href="{{ route('categoryPage', ['id' => $category->id]) }}"
                                 data-abc="true">
-                                <div class="product-wrapper mb-45 text-center">
+                                <div class="product-wrapper mb-45 text-center" style="height: 200px;">
                                     <img src="{{ asset('storage/vendor/products/category/images/' . $category->image) }}"
-                                        alt="category-image" style="background-size:cover; width:100%;">
+                                        alt="category-image" style="background-size:cover; width:100%; height:175px;">
                                     <div class="product-action">
                                         <div class="product-action-style w-100">
 

@@ -150,7 +150,8 @@
                         <div class="form-group mb-2">
                             <label class="col-md-4 control-label" for="description">Description</label>
                             <div class="col-md-8">
-                                <textarea class="form-control" id="description" name="description" placeholder="beriefly write about the product">{{ $product->description }}</textarea>
+                                <textarea class="form-control" id="description" name="description" placeholder="beriefly write about the product"
+                                    maxlength="1000">{{ $product->description }}</textarea>
                                 @error('description')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror

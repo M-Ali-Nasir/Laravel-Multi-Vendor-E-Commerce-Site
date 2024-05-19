@@ -16,6 +16,7 @@ use App\Mail\UserWelcomeEmail;
 use App\Mail\ForgetPassword;
 use App\Mail\PasswordRestSuccessful;
 use Illuminate\Support\Facades\Crypt;
+use App\Models\User\Cart as UserCart;
 
 
 class AuthController extends Controller
@@ -123,7 +124,13 @@ class AuthController extends Controller
             $stores = $storesQuery->get();
             $categories = $categoriesQuery->get();
 
-            return view('user.home', compact('customer','stores','products','categories','vendors', 'searchQuery','allcategories'));
+            $cartAmount =0;
+            $totalcart = UserCart::where('customer_id', $customer->id)->get();
+            foreach ($totalcart as $key => $number) {
+                $cartAmount++;
+            }
+
+            return view('user.home', compact('customer','stores','products','categories','vendors', 'searchQuery','allcategories','cartAmount'));
         }else{
             return redirect()->route('home');
         }

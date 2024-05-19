@@ -4,6 +4,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <head>
+        <link rel="icon" href="{{ asset('images/home/favicon.png') }}" type="image/png">
+    </head>
+
     <title>@yield('title')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -26,6 +31,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
         integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
     </script>
+
+    <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
 
 
     <style>
@@ -52,6 +59,23 @@
             background: #848484;
             /* Color of the thumb on hover */
         }
+
+        .bi-cart:after {
+            content: attr(value);
+            font-size: 12px;
+            color: #fff;
+            background: rgb(255, 53, 53);
+            border-radius: 50%;
+            padding: 0 5px;
+            position: relative;
+            left: -8px;
+            top: -10px;
+            opacity: 0.9;
+        }
+
+        /* spinner */
+
+        /* Spinner styles */
     </style>
 
 
@@ -61,8 +85,11 @@
 
 <body>
 
+    <!-- Spinner element -->
+    {{-- <div id="loading-spinner" class="spinner"></div> --}}
 
-    <div class="" style="">
+
+    <div id="main-content" class="content">
         @yield('content')
     </div>
 
@@ -70,9 +97,6 @@
 
     @yield('javascript')
 
-    {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
-    </script> --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

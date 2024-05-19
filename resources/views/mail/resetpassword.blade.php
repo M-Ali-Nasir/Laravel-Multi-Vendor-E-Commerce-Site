@@ -15,12 +15,12 @@
                                         <div class="row">
                                             <div class="col-12">
                                                 <div class="mb-5">
-                                                    <div class="text-center mb-4">
+                                                    {{-- <div class="text-center mb-4">
                                                         <a href="{{ route('home') }}">
                                                             <img src="{{ asset('images/home/logo.png') }}"
                                                                 alt="BootstrapBrain Logo" width="130" height="120">
                                                         </a>
-                                                    </div>
+                                                    </div> --}}
                                                     <h2 class="h4 text-center">Password Reset</h2>
                                                     <h3 class="fs-6 fw-normal text-secondary text-center m-0">Click the
                                                         button
