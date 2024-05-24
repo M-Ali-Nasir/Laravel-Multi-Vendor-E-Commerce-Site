@@ -11,7 +11,7 @@ if(categories === 3){
   totalSlides1= categories;
   totalSlides2 = 1;
 }else{
-  totalSlides1 = 3;
+  totalSlides1 = 4;
   totalSlides2 = 2;
 }
 console.log(totalSlides1);

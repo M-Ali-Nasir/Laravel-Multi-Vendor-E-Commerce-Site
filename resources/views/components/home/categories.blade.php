@@ -20,7 +20,7 @@
 
 
 
-    <div class="slide-container swiper">
+    <div class="slide-container swiper w-100">
         <div class="slide-content">
             <div class="card-wrapper swiper-wrapper">
                 @foreach ($categories as $category)

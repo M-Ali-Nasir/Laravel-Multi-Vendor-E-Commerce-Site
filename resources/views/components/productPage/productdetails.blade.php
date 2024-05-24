@@ -36,13 +36,44 @@
                     </p>
 
                     <strong>
-                        <p style="font-size: 20px;">{{ $product->name }}</p>
+                        <p class="" style="font-size: 20px;">{{ $product->name }}</p>
                     </strong>
+
+
+                    @php
+                        $totalReviews = 0;
+                        $count = 0;
+                        foreach ($product->reviews as $key => $review) {
+                            $totalReviews += $review->rating;
+                            $count += 1;
+                        }
+                        if ($count != 0) {
+                            $totalReviews = $totalReviews / $count;
+                        }
+
+                    @endphp
+
+
+                    <div class="star-rating">
+                        <ul class="list-inline">
+                            @for ($i = 0; $i < $totalReviews; $i++)
+                                <li class="list-inline-item"><i class="bi bi-star-fill"></i></li>
+                            @endfor
+                            @for ($i = $totalReviews; $i < 5; $i++)
+                                <li class="list-inline-item"><i class="bi bi-star"></i></li>
+                            @endfor
+                            ({{ $count }})
+                        </ul>
+                    </div>
+
+
 
                     <p>{{ $product->description }}</p>
 
                     <form class=" justify-content-left" method="get"
-                        action="{{ route('addToCart', ['customerId' => $customerId, 'productId' => $product->id]) }}">
+                        @if (Session::has('customer')) action= "{{ route('addToCart', ['customerId' => $customerId, 'productId' => $product->id]) }}"
+                        @else 
+                        action= "{{ route('customerLogin') }}" @endif>
 
                         <input type="number" id="priceInput" value="{{ $product->price }}" name="price" hidden />
 
@@ -92,8 +123,9 @@
                                 <div class="alert alert-danger">{{ $message }}</div>
                             @enderror
 
-
+                            <input type="text" value="{{ $product->id }}" name="productId" hidden>
                         </div>
+                        <p id="stock"></p>
 
                         @if (Session::has('customer'))
                             <button class="btn btn-primary mt-3" type="submit" id="cartBtn1">
@@ -101,10 +133,14 @@
                                 <i class="fas fa-shopping-cart ms-1" id="cartBtn1"></i>
                             </button>
                         @else
-                            <a class="btn btn-primary mt-3" href="{{ route('customerLogin') }}" id="cartBtn2">
+                            {{-- <a class="btn btn-primary mt-3" href="{{ route('customerLogin') }}" id="cartBtn2">
                                 Sign In to add into cart
                                 <i class="fas fa-shopping-cart ms-1" id="cartBtn2"></i>
-                            </a>
+                            </a> --}}
+                            <button class="btn btn-primary mt-3" type="submit" id="cartBtn1">
+                                Sign In to add into cart
+                                <i class="fas fa-shopping-cart ms-1" id="cartBtn1"></i>
+                            </button>
                         @endif
 
 
@@ -119,10 +155,13 @@
         <hr />
 
         <!--Grid row-->
-        <div class="row d-flex justify-content-center">
+        <div class="row
+                        d-flex justify-content-center">
             <!--Grid column-->
             <div class="col-md-10 text-center">
-                <h4 class="my-4 h4">{{ $store->name }}</h4>
+                <h4 class="my-4 h4"><a class="text-decoration-none text-dark"
+                        href="{{ route('ShopPage', ['id' => $store->id]) }}">{{ $store->name }}</a>
+                </h4>
 
                 <p>{{ $store->description }}</p>
             </div>
@@ -145,6 +184,60 @@
 
         <!--Grid column-->
     </div>
+    <hr>
+    <div class="container">
+        <div class="text-center">
+            <h4>Reviews & Rating</h4>
+        </div>
+        <div>
+            @if (count($product->reviews) != 0)
+                @foreach ($product->reviews as $review)
+                    @foreach ($customers as $r_customer)
+                        @if ($r_customer->id == $review->customer_id)
+                            <section class="p-4 p-md-5 text-center text-lg-start shadow-1-strong rounded">
+                                <div class="row d-flex justify-content-center">
+                                    <div class="col-md-10">
+                                        <div class="card">
+                                            <div class="card-body m-3">
+                                                <div class="row">
+                                                    <div
+                                                        class="col-lg-2 d-flex justify-content-center align-items-center mb-4 mb-lg-0">
+                                                        <img src="{{ asset($customer->avatar ? 'Storage/customer/avatars/' . $customer->avatar : 'images/default/user.png') }}"
+                                                            class="rounded-circle img-fluid shadow-1"
+                                                            alt="woman avatar" width="100" height="100" />
+                                                    </div>
+                                                    <div class="col-lg-10">
+                                                        <p class="text-muted fw-light mb-4">
+                                                            {{ $review->review }}
+                                                        </p>
+                                                        @for ($i = 0; $i < $review->rating; $i++)
+                                                            <li class="list-inline-item"><i
+                                                                    class="bi bi-star-fill"></i>
+                                                            </li>
+                                                        @endfor
+                                                        <p class="fw-bold lead mb-2">
+                                                            <strong>{{ $r_customer->name }}</strong>
+                                                        </p>
+
+
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        @endif
+                    @endforeach
+                @endforeach
+            @else
+                <div class="text-center">
+                    <h6>No Reviews Yet</h6>
+                </div>
+            @endif
+        </div>
+    </div>
     <!--Grid row-->
 </div>
 
@@ -158,6 +251,7 @@
         var quantityInStock = selectedOption.getAttribute('data-quantity');
         var cartBtn1 = document.getElementById("cartBtn1");
         var cartBtn2 = document.getElementById("cartBtn2");
+        var stockText = document.getElementById("stock");
 
         // Set the max attribute of the quantity input field
         quantityInput.max = quantityInStock;
@@ -175,29 +269,48 @@
                 //cartBtn2.classList.add("disabled");
 
                 cartBtn1.textContent = "Out Of Stock";
+                stockText.textContent = "";
+                cartBtn1.classList.remove('btn-primary');
+                cartBtn1.classList.add('btn-danger');
+
+
 
                 //cartBtn2.textContent = "Out Of Stock";
             } else {
                 cartBtn1.disabled = false;
                 cartBtn1.textContent = "Add To Cart";
+                cartBtn1.classList.remove('btn-danger');
+                cartBtn1.classList.add('btn-primary');
                 //cartBtn2.classList.remove("disabled");
                 //cartBtn2.textContent = "Sign in to Add To Cart";
+                stockText.textContent = "In Stock";
+                stockText.classList.remove('text-danger');
+                stockText.classList.add('text-success');
 
             }
         @else
             if (quantityInStock <= 0) {
                 quantityInput.disabled = true;
                 //cartBtn1.disabled = true;
-                cartBtn2.classList.add("disabled");
+                cartBtn1.classList.add("disabled");
 
-                //cartBtn1.textContent = "Out Of Stock";
+                cartBtn1.textContent = "Out Of Stock";
 
-                cartBtn2.textContent = "Out Of Stock";
+                stockText.textContent = "";
+                cartBtn1.classList.remove('btn-primary');
+                cartBtn1.classList.add('btn-danger');
             } else {
                 // cartBtn1.disabled = false;
                 // cartBtn1.textContent = "Add To Cart";
-                cartBtn2.classList.remove("disabled");
-                cartBtn2.textContent = "Sign in to Add To Cart";
+                cartBtn1.classList.remove("disabled");
+                cartBtn1.classList.remove('btn-danger');
+                cartBtn1.classList.add('btn-primary');
+                cartBtn1.textContent = "Sign in to Add To Cart";
+
+                stockText.textContent = "In Stock";
+                stockText.classList.remove('text-danger');
+                stockText.classList.add('text-success');
+
 
             }
         @endif

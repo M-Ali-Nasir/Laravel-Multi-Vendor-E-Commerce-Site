@@ -16,7 +16,7 @@
 
  @section('body')
 
-     @include('components.home.serach')
+     {{-- @include('components.home.serach') --}}
 
  @section('title', 'MarketPlace-Connect')
 

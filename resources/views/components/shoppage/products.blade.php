@@ -126,11 +126,38 @@
                                     </div>
                                 </a>
                                 <div class="card-body text-center">
-                                    <h4 class="card-title">{{ $product->name }}</h4>
+                                    <h4 class="text-truncate card-title">{{ $product->name }}</h4>
                                     <p class="text-muted">Starting from {{ $product->price }} PKR/-</p>
-                                    <a class="btn btn-outline-primary btn-sm"
+
+                                    @php
+                                        $totalReviews = 0;
+                                        $count = 0;
+                                        foreach ($product->reviews as $key => $review) {
+                                            $totalReviews += $review->rating;
+                                            $count += 1;
+                                        }
+                                        if (!($count < 1)) {
+                                            $totalReviews = $totalReviews / $count;
+                                        }
+
+                                    @endphp
+
+
+                                    <div class="star-rating">
+                                        <ul class="list-inline">
+                                            @for ($i = 0; $i < $totalReviews; $i++)
+                                                <li class="list-inline-item"><i class="bi bi-star-fill"></i></li>
+                                            @endfor
+                                            @for ($i = $totalReviews; $i < 5; $i++)
+                                                <li class="list-inline-item"><i class="bi bi-star"></i></li>
+                                            @endfor
+                                            ({{ $count }})
+                                        </ul>
+                                    </div>
+
+                                    {{-- <a class="btn btn-outline-primary btn-sm"
                                         href="{{ route('productView', ['product_id' => $product->id]) }}"
-                                        data-abc="true">View Products</a>
+                                        data-abc="true">View Products</a> --}}
                                 </div>
                             </div>
                         </div>

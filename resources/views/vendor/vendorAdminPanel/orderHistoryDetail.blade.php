@@ -1,6 +1,6 @@
 @extends('vendor.vendorAdminPanel.layout.main')
 
-@section('title', 'Dashboard')
+@section('title', 'Order History')
 
 @section('mainBody')
 

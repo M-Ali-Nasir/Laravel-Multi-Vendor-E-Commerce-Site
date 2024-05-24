@@ -41,15 +41,36 @@
                             </td>
                             <td>{{ $order->payment_method }}</td>
                             <td>
-                                @foreach ($orderHistories as $status)
-                                    @if ($status->order_id == $order->id)
-                                        {{ $status->status }}
-                                    @endif
-                                @endforeach
+                                @if ($order->payment_method == 'Card')
+                                    Received
+                                @else
+                                    @foreach ($orderHistories as $status)
+                                        @if ($status->order_id == $order->id)
+                                            @if ($status->status == 'Delivered')
+                                                Received
+                                            @else
+                                                Pending
+                                            @endif
+                                        @endif
+                                    @endforeach
+                                @endif
                             </td>
                         </tr>
                     @endforeach
 
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <td>Pending Payments: </td>
+                                <td>{{ $pendingPayment }}</td>
+                                <td>Received Payments: </td>
+                                <td>{{ $recievedPayment }}</td>
+                                <td>Total Payments: </td>
+                                <td>{{ $totalEarned }}</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
                     <!-- Add more rows for other payments -->
                 </tbody>
             </table>

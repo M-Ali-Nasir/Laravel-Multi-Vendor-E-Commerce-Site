@@ -17,8 +17,9 @@ class HomeController extends Controller
 {
     //
 
-    public function home(Request $request){
-        
+    public function home(Request $request)
+    {
+
         $allcategories = Product_categories::all();
 
         if (Session::has('customer')) {
@@ -29,22 +30,22 @@ class HomeController extends Controller
             // Get the search query
             $searchQuery = $request->input('search');
 
-            
-            
+
+
             $vendors = Vendor::where('status', 'active');
 
             $activeVendorIds = vendor::where('status', 'active')->pluck('id')->toArray();
             $storesQuery = Store::whereIn('vendor_id', $activeVendorIds);
             // Retrieve orders for the vendor with pending status
-            $storeIds= $storesQuery ->pluck('id')->toArray();
+            $storeIds = $storesQuery->pluck('id')->toArray();
             //$storesQuery = Store::whereIn('vendor_id', $activeVendorIds);
 
-            
+
 
             // Initialize the query builder for products
-            $productsQuery = Product::whereIn('store_id', $storeIds)->with('variations', 'paymentMethods');
+            $productsQuery = Product::whereIn('store_id', $storeIds)->with('variations', 'paymentMethods', 'reviews');
 
-            
+
             $categoriesQuery = Product_categories::whereIn('vendor_id', $activeVendorIds);
 
             $allcategories = Product_categories::whereIn('vendor_id', $activeVendorIds)->get();
@@ -57,21 +58,21 @@ class HomeController extends Controller
 
             // Get the filtered or all products
             $products = $productsQuery->get();
-            
+
             // Get all stores, categories, and vendors
             $stores = $storesQuery->get();
             $categories = $categoriesQuery->get();
-            
+
             //dd($products);
-            
-            
 
-            return view('user.home', compact('stores', 'products', 'categories', 'vendors', 'searchQuery','allcategories'));
+
+
+            return view('user.home', compact('stores', 'products', 'categories', 'vendors', 'searchQuery', 'allcategories'));
         }
-
     }
 
-    public function privayPolicy(){
+    public function privayPolicy()
+    {
         return view('privacyPolicy');
     }
 
@@ -82,43 +83,43 @@ class HomeController extends Controller
             $customer = Session::get('customer');
             $allcategories = Product_categories::all();
 
-            $cartAmount =0;
+            $cartAmount = 0;
             $totalcart = Cart::where('customer_id', $customer->id)->get();
             foreach ($totalcart as $key => $number) {
                 $cartAmount++;
             }
 
-            return view('about', compact('customer','allcategories','cartAmount'));
+            return view('about', compact('customer', 'allcategories', 'cartAmount'));
         } else {
             $allcategories = Product_categories::all();
 
-            return view('about',compact('allcategories'));
+            return view('about', compact('allcategories'));
         }
     }
 
     public function allShopsPage()
     {
-        
-            $vendors = Vendor::where('status', 'active');
 
-            $activeVendorIds = vendor::where('status', 'active')->pluck('id')->toArray();
-            $storesIds = Store::whereIn('vendor_id', $activeVendorIds)->pluck('id')->toArray();
+        $vendors = Vendor::where('status', 'active');
 
-            $allcategories = Product_categories::whereIn('vendor_id', $activeVendorIds)->get();
-            $stores = Store::whereIn('vendor_id', $activeVendorIds)->get();
+        $activeVendorIds = vendor::where('status', 'active')->pluck('id')->toArray();
+        $storesIds = Store::whereIn('vendor_id', $activeVendorIds)->pluck('id')->toArray();
+
+        $allcategories = Product_categories::whereIn('vendor_id', $activeVendorIds)->get();
+        $stores = Store::whereIn('vendor_id', $activeVendorIds)->get();
 
         if (Session::has('customer')) {
             $customer = Session::get('customer');
             $customer = Customer::where('id', $customer->id)->first();
 
-            $cartAmount =0;
+            $cartAmount = 0;
             $totalcart = Cart::where('customer_id', $customer->id)->get();
             foreach ($totalcart as $key => $number) {
                 $cartAmount++;
             }
-            return view('allShops', compact('customer','stores','allcategories','cartAmount'));
+            return view('allShops', compact('customer', 'stores', 'allcategories', 'cartAmount'));
         } else {
-            return view('allShops',compact('stores','allcategories'));
+            return view('allShops', compact('stores', 'allcategories'));
         }
     }
 
@@ -128,7 +129,7 @@ class HomeController extends Controller
         //     $customer = Session::get('customer');
         //     $store = Store::where('id', $id)->first();
         //     $products = Product::where('store_id', $store->id)->with('paymentMethods','variations')->get();
-            
+
         //     $vendor = Vendor::where('id', $store->vendor_id)->first();
         //     $categories = Product_categories::where('vendor_id', $vendor->id)->get();
         //     return view('vendor.shopPage', compact('customer','store','vendor','products','categories'));
@@ -140,7 +141,7 @@ class HomeController extends Controller
         //     return view('vendor.shopPage', compact('store','vendor','products','categories'));
         // }
 
-        
+
         $allcategories = Product_categories::all();
         // Fetch the store and vendor information
         $store = Store::where('id', $id)->first();
@@ -150,14 +151,14 @@ class HomeController extends Controller
         $searchQuery = $request->input('search');
 
         // Initialize the query builders for products and categories
-        $productsQuery = Product::where('store_id', $store->id)->with('paymentMethods', 'variations');
+        $productsQuery = Product::where('store_id', $store->id)->with('paymentMethods', 'variations', 'reviews');
         $categoriesQuery = Product_categories::where('vendor_id', $vendor->id);
 
         // If there's a search query, apply filters
         if ($searchQuery) {
-            $productsQuery->where(function($query) use ($searchQuery) {
+            $productsQuery->where(function ($query) use ($searchQuery) {
                 $query->where('name', 'like', '%' . $searchQuery . '%')
-                      ->orWhere('description', 'like', '%' . $searchQuery . '%');
+                    ->orWhere('description', 'like', '%' . $searchQuery . '%');
             });
 
             $categoriesQuery->where('name', 'like', '%' . $searchQuery . '%');
@@ -167,24 +168,26 @@ class HomeController extends Controller
         $products = $productsQuery->get();
         $categories = $categoriesQuery->get();
 
+        $shopCategories = $categories;
+
         if (Session::has('customer')) {
             $customer = Session::get('customer');
             $customer = Customer::where('id', $customer->id)->first();
 
-            $cartAmount =0;
+            $cartAmount = 0;
             $totalcart = Cart::where('customer_id', $customer->id)->get();
             foreach ($totalcart as $key => $number) {
                 $cartAmount++;
             }
-        
-            return view('vendor.shopPage', compact('customer', 'store', 'vendor', 'products', 'categories', 'searchQuery','cartAmount','allcategories'));
-        }else{
-            return view('vendor.shopPage', compact('store', 'vendor', 'products', 'categories', 'searchQuery','allcategories'));
+
+            return view('vendor.shopPage', compact('customer', 'store', 'vendor', 'products', 'categories', 'searchQuery', 'cartAmount', 'allcategories', 'shopCategories'));
+        } else {
+            return view('vendor.shopPage', compact('store', 'vendor', 'products', 'categories', 'searchQuery', 'allcategories', 'shopCategories'));
         }
-        
     }
 
-    public function contactVendor(Request $request, $id,  $vendor_id){
+    public function contactVendor(Request $request, $id,  $vendor_id)
+    {
 
         $validated = $request->validate([
             'name' => 'required',
@@ -200,13 +203,13 @@ class HomeController extends Controller
 
         $vendor = Vendor::where('id', $vendor_id)->first();
         $toEmail = $vendor->email;
-        Mail::to($toEmail)->send(new VendorContact($name , $email , $subject , $usermessage , $vendor));
+        Mail::to($toEmail)->send(new VendorContact($name, $email, $subject, $usermessage, $vendor));
 
-        return redirect()->back()->with('success','Email sent Successfully');
-
+        return redirect()->back()->with('success', 'Email sent Successfully');
     }
 
-    public function categoryPage($id){
+    public function categoryPage($id)
+    {
 
         $allcategories = Product_categories::all();
         $category = Product_categories::where('id', $id)->first();
@@ -219,15 +222,15 @@ class HomeController extends Controller
             $customer = Session::get('customer');
             $customer = Customer::where('id', $customer->id)->first();
 
-            $cartAmount =0;
+            $cartAmount = 0;
             $totalcart = Cart::where('customer_id', $customer->id)->get();
             foreach ($totalcart as $key => $number) {
                 $cartAmount++;
             }
-        
-            return view('category', compact('category','customer', 'store', 'vendor', 'products','allcategories','<cartAmount></cartAmount>'));
-        }else{
-            return view('category', compact('category','store', 'vendor', 'products','allcategories'));
+
+            return view('category', compact('category', 'customer', 'store', 'vendor', 'products', 'allcategories', 'cartAmount'));
+        } else {
+            return view('category', compact('category', 'store', 'vendor', 'products', 'allcategories'));
         }
     }
 }

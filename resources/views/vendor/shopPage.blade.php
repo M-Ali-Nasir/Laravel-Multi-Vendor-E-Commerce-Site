@@ -9,7 +9,7 @@
 @section('body')
 
 
-    <div class="container d-flex justify-content-center mb-3">
+    {{-- <div class="container d-flex justify-content-center mb-3">
         <form class="me-2 mb-2 mb-lg-0 d-flex me-5" method="GET" action="{{ route('ShopPage', ['id' => $store->id]) }}">
             @csrf
             <input type="text" class="form-control form-control-lg border-rounded -0" value="{{ $searchQuery }}"
@@ -18,7 +18,8 @@
                 <i class="bi bi-search"></i> <!-- Search icon -->
             </button>
         </form>
-    </div>
+    </div> --}}
+
     @include('components.home.shopbanner')
 
 

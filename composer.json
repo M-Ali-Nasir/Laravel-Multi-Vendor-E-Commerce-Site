@@ -6,8 +6,9 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "facebook/graph-sdk": "^5.1",
         "laravel/framework": "^11.0",
-        "laravel/socialite": "^5.14",
+        "laravel/socialite": "*",
         "laravel/tinker": "^2.9",
         "stripe/stripe-php": "^14.6"
     },

@@ -91,7 +91,8 @@ class CheckoutController extends Controller
                 $product = Product::findOrFail($cartItem->product_id);
                 
                 $converter = new CurrencyConverter();
-                $price = round($converter->convertPKRtoUSD($cartItem->price) *100);
+                $cartItemPrice = $cartItem->price +150;
+                $price = round($converter->convertPKRtoUSD($cartItemPrice) *100);
                 return [
                     'price_data' => [
                         'currency' => 'usd',
@@ -176,7 +177,7 @@ class CheckoutController extends Controller
             $newOrder->variation_id = $item->variation_id;
             $newOrder->quantity = $item->quantity;
             $newOrder->payment_method = 'Card';
-            $newOrder->amount = $item->price * $item->quantity;
+            $newOrder->amount = ($item->price + 150) * $item->quantity;
 
             $newOrder->save();
 
@@ -213,12 +214,13 @@ class CheckoutController extends Controller
         
 
         
-        
+        $cartItems = Cart::where('customer_id', $customer->id)->get();
+
         
         Cart::where('customer_id', $customer->id)->delete();
 
 
-        return redirect()->route('customerCart',['customerName' => $customer->name])->with('success','Payment Successful');
+        return redirect()->route('orderCompleted',['id' => $customer->id])->with('success','Conratulations! your order is Completed')->with('cartItems', $cartItems);
 
     }
 

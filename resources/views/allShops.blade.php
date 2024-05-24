@@ -50,8 +50,8 @@
 
 
 
-        <div class="container">
-            <div class="row">
+        <div class="container d-flex justify-content-center w-100">
+            <div class="row d-flex justify-content-center w-100">
                 <div class="col-md-12">
                     <!-- Product Cards -->
                     <div class="row">

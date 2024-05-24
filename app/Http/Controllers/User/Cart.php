@@ -24,11 +24,17 @@ class Cart extends Controller
         $store = Store::where('id', $product->store_id)->first();
         $vendor = Vendor::where('id', $store->vendor_id)->first();
         
-        $validated = $request->validate([
-            'quantity' => 'required|min:1|max:10',
-            'price' => 'required',
-            'variation' => 'required'
-        ]);
+        if(Session::has('productData')){
+            //$productData = json_decode(json_encode(Session::get('productData')));
+            $validated = Session::get('productData');
+            //dd($validated);
+        }else{
+            $validated = $request->validate([
+                'quantity' => 'required|min:1|max:10',
+                'price' => 'required',
+                'variation' => 'required'
+            ]);
+        }
         $customer = UserCart::where('id', $customerId)->first();
         // if(empty($customer)){
             $cart = new UserCart();
@@ -38,9 +44,11 @@ class Cart extends Controller
             $cart->vendor_id = $vendor->id;
             $cart->quantity = $validated['quantity'];
             $cart->price = $validated['price'];
-            $cart->variation_id = $request->variation;
+            $cart->variation_id = $validated['variation'];
 
             $cart->save();
+
+            Session::forget('productData');
 
             return redirect()->back()->with('success','Product Added Successfully');
 
@@ -57,6 +65,15 @@ class Cart extends Controller
             $cartItem->delete();
 
             return redirect()->route('customerCart',['customerName',$customer->id])->with('success','Item removed from cart successfully');
+        }
+    }
+
+    public function deleteCart($id){
+        if(Session::has('customer')){
+            UserCart::where('customer_id', $id)->delete();
+            return redirect()->route('customerCart',['customerName'=> $id]);
+        }else{
+            return redirect()->route('home');
         }
     }
 }

@@ -37,8 +37,8 @@
 
         .div-5 {
             align-self: end;
-            margin: 99px 10px 10px 30px;
-            font: 36px Inter, sans-serif;
+            margin: 89px 10px 10px 0px;
+            font: 26px Inter, sans-serif;
         }
     </style>
 @endsection
@@ -136,9 +136,9 @@
                     <div class="card-body p-0">
                         <div class="div rounded-3  shadow-lg" style="background-color: #a70d64">
                             <div class="div-2"></div>
-                            <div class="div-3">Total Earned</div>
+                            <div class="div-3">Recieved Payments</div>
                             <div class="div-4"></div>
-                            <div class="div-5">{{ $totalEarned }}</div>
+                            <div class="div-5">{{ $recievedPayment }}</div>
                         </div>
                     </div>
                 </div>

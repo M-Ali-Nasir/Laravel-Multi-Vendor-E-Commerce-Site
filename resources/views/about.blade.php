@@ -25,6 +25,7 @@
             ultimate destination. Join us in creating a vibrant marketplace where connections are made,
             transactions are effortless, and shopping is an enjoyable adventure.
         </p>
+
     </div>
 
 

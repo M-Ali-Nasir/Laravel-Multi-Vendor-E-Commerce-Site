@@ -180,11 +180,11 @@
                                 href="{{ route('productVariations', ['id' => $vendor->id]) }}"><i
                                     class="fas fa-cubes me-2"></i>Product Variations</a>
                         </li>
-                        {{-- <li class="nav-item">
-                        <a class="nav-link text-dark"
-                            href="{{ route('inventoryManagementView', ['id' => $vendor->id]) }}"><i
-                                class="fas fa-clipboard-list me-2"></i>Inventory Management</a>
-                    </li> --}}
+                        <li class="nav-item rounded-4 {{ request()->routeIs('productInventory') ? 'bg-dark' : '' }}">
+                            <a class="nav-link {{ request()->routeIs('productInventory') ? 'text-light' : 'text-dark' }}"
+                                href="{{ route('productInventory', ['id' => $vendor->id]) }}"><i
+                                    class="fas fa-clipboard-list me-2"></i>Inventory Management</a>
+                        </li>
 
                         <hr class="text-dark">
 
@@ -195,7 +195,7 @@
                             <a class="nav-link {{ request()->routeIs('orderDetails') ? 'text-light' : 'text-dark' }}"
                                 href="{{ route('orderDetails', ['id' => $vendor->id]) }}"><i
                                     class="fas fa-clipboard-check me-2"></i>Orders
-                                Details</a>
+                                Details <span class="badge bg-primary">{{ $pendingOrders }}</span></a>
                         </li>
                         <li class="nav-item rounded-4 {{ request()->routeIs('orderHistory') ? 'bg-dark' : '' }}">
                             <a class="nav-link {{ request()->routeIs('orderHistory') ? 'text-light' : 'text-dark' }}"

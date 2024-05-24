@@ -12,19 +12,24 @@ use App\Mail\VendorWelcomeEmail;
 use Illuminate\Support\Str;
 use App\Mail\VendorActivation;
 use App\Mail\ForgetPassword;
+use App\Models\Vendor\OrderHistory;
+use App\Models\Vendor\Order;
 
 class VendorAuthController extends Controller
 {
     //
-    public function loginPage(){
+    public function loginPage()
+    {
         return view('vendor.authentication.login');
     }
 
-    public function registerPage(){
+    public function registerPage()
+    {
         return view('vendor.authentication.register');
     }
 
-    public function registerVendor(Request $request){
+    public function registerVendor(Request $request)
+    {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:vendors,email',
@@ -35,7 +40,7 @@ class VendorAuthController extends Controller
         $user->name = $validated['name'];
         $user->email = $validated['email'];
         $user->password = Hash::make($validated['password']);
-        
+
         $user->save();
 
         //sending welcome email to vendor
@@ -46,7 +51,8 @@ class VendorAuthController extends Controller
         return redirect()->route('vendorLogin');
     }
 
-    public function loginVendor(Request $request){
+    public function loginVendor(Request $request)
+    {
 
         $validated = $request->validate([
             'email' => 'required',
@@ -58,9 +64,10 @@ class VendorAuthController extends Controller
         if ($vendor && Hash::check($validated['password'], $vendor->password)) {
             // Password is correct
             // Proceed with login...
+
             Session::put('vendor', $vendor);
-            return redirect()->route('vendorDashboard',['vendorName', $vendor->name]);
-            } elseif($vendor) {
+            return redirect()->route('vendorDashboard', ['vendorName', $vendor->name]);
+        } elseif ($vendor) {
             // Password is incorrect
             // Handle invalid login...
             return redirect()->back()->withErrors(['error' => 'Invalid Password']);
@@ -68,32 +75,35 @@ class VendorAuthController extends Controller
         return redirect()->back()->withErrors(['error' => 'Invalid Email']);
     }
 
-    public function logoutVendor(){
-        if(Session::has('vendor')){
+    public function logoutVendor()
+    {
+        if (Session::has('vendor')) {
             Session::forget('vendor');
+            Session::forget('pendingOrders');
             return redirect()->route('home');
         }
         return redirect()->route('home');
     }
 
-    public function activation($id){
+    public function activation($id)
+    {
         $vendor = Vendor::where('id', $id)->first();
 
         $pin = mt_rand(100000, 999999);
 
-        
-        Mail::to($vendor->email)->send(new VendorActivation($vendor,$pin));
 
-        if(Session::has("varification_pin")){
+        Mail::to($vendor->email)->send(new VendorActivation($vendor, $pin));
+
+        if (Session::has("varification_pin")) {
             Session::forget("varification_pin");
         }
         Session::put("varification_pin", $pin);
 
         return view('vendor.authentication.activation', compact('vendor'));
-
     }
 
-    public function activateVendor(Request $request, $id){
+    public function activateVendor(Request $request, $id)
+    {
         $vendor = Vendor::where('id', $id)->first();
 
         // $request->validate([
@@ -105,39 +115,40 @@ class VendorAuthController extends Controller
         //     'd6' => 'required|max:9',
         // ]);
 
-        $userPin = $request->d1.$request->d2.$request->d3.$request->d4.$request->d5.$request->d6;
-        
-        if(Session::has('varification_pin')){
+        $userPin = $request->d1 . $request->d2 . $request->d3 . $request->d4 . $request->d5 . $request->d6;
+
+        if (Session::has('varification_pin')) {
             $pin = Session::get('varification_pin');
-            if($userPin == $pin){
+            if ($userPin == $pin) {
                 $vendor->status = 'active';
                 $vendor->save();
-                return redirect()->route('vendorProfile', ['vendorName'=> $vendor->name]);
-            }else{
-                return redirect()->route('activation',['id'=> $vendor->id])->with('error','invalid code');
+                return redirect()->route('vendorProfile', ['vendorName' => $vendor->name]);
+            } else {
+                return redirect()->route('activation', ['id' => $vendor->id])->with('error', 'invalid code');
             }
-        }else{
-            return redirect()->route('activation',['id'=> $vendor->id])->with('error','Session timed out! Retry');
+        } else {
+            return redirect()->route('activation', ['id' => $vendor->id])->with('error', 'Session timed out! Retry');
         }
-
     }
 
-    public function vendorForgetPassword(){
+    public function vendorForgetPassword()
+    {
         $user = "vendor";
-        return view('forgetPassword',compact('user'));
+        return view('forgetPassword', compact('user'));
     }
-    
-    public function vendorForgetPasswordSendMail(Request $request){
+
+    public function vendorForgetPasswordSendMail(Request $request)
+    {
         $validated = $request->validate([
             'email' => 'required|email',
         ]);
 
         $user = Vendor::where('email', $validated['email'])->first();
-        if(isset($user)){
+        if (isset($user)) {
             $usertype = "vendor";
             Mail::to($validated['email'])->send(new ForgetPassword($usertype, $user));
-            return redirect()->back()->with('success',"Check your Inbox");
+            return redirect()->back()->with('success', "Check your Inbox");
         }
-        return redirect()->back()->with('error',"No user found with this email");
+        return redirect()->back()->with('error', "No user found with this email");
     }
 }

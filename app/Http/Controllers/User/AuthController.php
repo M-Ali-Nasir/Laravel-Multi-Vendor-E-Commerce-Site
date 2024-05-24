@@ -22,7 +22,18 @@ use App\Models\User\Cart as UserCart;
 class AuthController extends Controller
 {
     // viewing the Authentication pages fro customer
-    public function loginPage(){
+    public function loginPage(Request $request){
+        
+        if (isset($request->quantity)){
+
+            $validated = $request->validate([
+                'quantity' => 'required|min:1|max:10',
+                'price' => 'required',
+                'variation' => 'required'
+            ]);
+            $productData = $request->only(['quantity','variation','price','productId']);
+            Session::put('productData',$productData);
+        }
         return view('user.userlogin');
     }
 
@@ -56,6 +67,8 @@ class AuthController extends Controller
     }
 
     public function loginUser(Request $request){
+        
+        //dd(Session::get('productData'));
         $validated = $request->validate([
             'email' => 'required',
             'password' => 'required',
@@ -67,7 +80,13 @@ class AuthController extends Controller
             // Password is correct
             // Proceed with login...
             Session::put('customer', $customer);
-            return redirect()->route('customerIndex',['customerName', $customer->id]);
+            if(Session::has('productData')){
+                $productData =  Session::get('productData');
+
+                return redirect()->route('addToCart', ['customerId' => $customer->id, 'productId' => $productData['productId']]);
+            }else{
+                return redirect()->route('customerIndex',['customerName', $customer->id]);
+            }
             } elseif($customer) {
             // Password is incorrect
             // Handle invalid login...

@@ -10,10 +10,13 @@ use App\Models\Vendor\Store;
 use App\Models\Vendor\PaymentMethod;
 use App\Models\Vendor\Order;
 use App\Models\User\Cart;
+use App\Models\Vendor\Products\ProductReview;
 
 class Product extends Model
 {
     use HasFactory;
+
+
 
     public function carts()
     {
@@ -30,12 +33,12 @@ class Product extends Model
     {
         return $this->belongsTo(Store::class);
     }
-    
+
 
     public function variations()
     {
         return $this->belongsToMany(Variations::class, 'product_variation', 'product_id', 'variation_id')
-                    ->withPivot('quantity', 'price_modifier','image');
+            ->withPivot('quantity', 'price_modifier', 'image');
     }
 
     public function paymentMethods()
@@ -47,5 +50,8 @@ class Product extends Model
         return $this->hasMany(Order::class);
     }
 
-    
+    public function reviews()
+    {
+        return $this->hasMany(ProductReview::class);
+    }
 }

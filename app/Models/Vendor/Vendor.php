@@ -10,6 +10,7 @@ use App\Models\Vendor\VendorBankDetails;
 use App\Models\Vendor\Products\Variations;
 use App\Models\Vendor\Products\Product_categories;
 use App\Models\Vendor\FacebookAuthorization;
+use App\Models\Vendor\VendorFb;
 
 class Vendor extends Model
 {
@@ -24,6 +25,11 @@ class Vendor extends Model
     public function facebookAuthorization()
     {
         return $this->hasOne(FacebookAuthorization::class);
+    }
+
+    public function vendorFb()
+    {
+        return $this->hasOne(VendorFb::class);
     }
 
     public function store()

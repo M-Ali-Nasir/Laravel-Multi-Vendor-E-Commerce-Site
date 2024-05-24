@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Vendor\Order;
 use App\Models\User\Cart;
+use App\Models\Vendor\Products\ProductReview;
 
 class Customer extends Model
 {
@@ -24,5 +25,10 @@ class Customer extends Model
     public function cart()
     {
         return $this->hasOne(Cart::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(ProductReview::class);
     }
 }

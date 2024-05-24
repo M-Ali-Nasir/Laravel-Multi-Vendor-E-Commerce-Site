@@ -59,7 +59,7 @@
                         </div>
                     @endif
 
-                    <div class="table-responsive">
+                    <div class="table-responsive py-5 smt-5">
                         <table class="table">
                             <thead>
                                 <tr>
@@ -125,8 +125,8 @@
                                                 </tr>
                                                 @php
                                                     $totalPrice += $item->price * $item->quantity;
-                                                    $shippingFee += 100;
-                                                    $tax += 2;
+                                                    $shippingFee += 150 * $item->quantity;
+
                                                 @endphp
                                             @endif
                                         @endforeach
@@ -137,13 +137,16 @@
                                 @endif
                             </tbody>
                         </table>
+                        <a href="{{ route('deleteCart', ['id' => $customer->id]) }}" class="btn btn-danger float-end"><i
+                                class="fa fa-shopping-cart"></i>Clear
+                            Cart</a>
                     </div>
 
-                    <div class="card shadow-2-strong mb-5 mb-lg-0 mb-5" style="border-radius: 16px;">
+                    <div class="card shadow-2-strong mb-5 mb-lg-0 mb-5 w-40 float-end" style="border-radius: 16px;">
                         <div class="card-body p-4">
 
-                            <div class="row">
-                                <div class="col-md-6 col-lg-4 col-xl-3 mb-4 mb-md-0">
+                            <div class="row float-end">
+                                <div class="col-md-12 col-lg-12 col-xl-12 mb-4 mb-md-0">
                                     <form>
                                         {{-- <div class="d-flex flex-row pb-3">
                                             <div class="d-flex align-items-center pe-2">
@@ -182,7 +185,9 @@
                                         </div>
                                     </form>
                                 </div> --}}
+
                                         <div class="col-md-6 col-lg-4 col-xl-6">
+
                                             {{-- <div class="row">
                     <div class="col-12 col-xl-6">
                       <div class="form-outline mb-4 mb-xl-5">
@@ -227,15 +232,15 @@
 
                                             <div class="d-flex justify-content-between mb-4" style="font-weight: 500;">
                                                 <p class="mb-2">Total pkr (tax + shipping included)</p>
-                                                <p class="mb-2">{{ $totalPrice + $shippingFee + $tax }}</p>
+                                                <p class="mb-2">{{ $totalPrice + $shippingFee + $tax }} pkr</p>
                                             </div>
 
                                             {{-- checkout address page --}}
                                             <a type="button" href="{{ route('checkoutView', ['id' => $customer->id]) }}"
-                                                class="btn btn-primary btn-block btn-lg">
+                                                class="btn btn-primary btn-block float-end">
                                                 <div class="d-flex justify-content-between">
                                                     <span>Checkout</span> &nbsp;
-                                                    <span>{{ $totalPrice + $shippingFee + $tax }} pkr</span>
+                                                    {{-- <span>{{ $totalPrice + $shippingFee + $tax }} pkr</span> --}}
                                                 </div>
                                             </a>
 

@@ -309,6 +309,14 @@
             </div>
         </div> --}}
 
+        @if (Session::has('reviewSuccess'))
+            <div class="d-flex align-text-center justify-content-center">
+                <div class="col-md-4 alert alert-success alert-dismissible text center fade show">
+                    <strong>Success!</strong> {{ Session::get('reviewSuccess') }}
+                </div>
+            </div>
+        @endif
+
 
 
 
@@ -329,6 +337,10 @@
                                 <input class="form-control mt-3" type="file" placeholder="Select New Image"
                                     name="avatar">
                             </span></div>
+                        <div class="text-center">
+                            <a class="btn btn-warning" href="{{ route('trackOrders', ['id' => $customer->id]) }}">Track
+                                Orders</a>
+                        </div>
                     </div>
                     <div class="col-md-5 border-right">
                         <div class="p-3 py-5">
@@ -447,16 +459,93 @@
 
 
 
+
+                            {{-- Review products --}}
+
+                            <div class="card checkout-order-summary">
+                                <div class="card-body">
+                                    <div class="p-3 mb-3">
+                                        <h5 class="font-size-24 mb-0">Review Products <p class="text-muted small">(click
+                                                product to
+                                                review)</p>
+                                        </h5>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-centered mb-0 table-nowrap">
+                                            <thead>
+                                                <tr>
+                                                    <th class="border-top-0" style="width: 110px;" scope="col">Product
+                                                    </th>
+                                                    <th class="border-top-0" scope="col">Product Desc</th>
+                                                    <th class="border-top-0" scope="col">Price</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (isset($reviewableOrders))
+
+                                                    @foreach ($reviewableOrders as $order)
+                                                        @foreach ($products as $product)
+                                                            @if ($product->id == $order->product_id)
+                                                                <tr>
+
+                                                                    <th scope="row"><img
+                                                                            src="{{ asset('storage/vendor/products/images/' . $product->image) }}"
+                                                                            alt="product-img" title="product-img"
+                                                                            class="avatar-lg rounded">
+                                                                    </th>
+                                                                    <td>
+                                                                        <h5 class="font-size-16 text-truncate"><a
+                                                                                href="#"
+                                                                                class="text-dark">{{ $product->name }}</a>
+                                                                        </h5>
+                                                                        <p class="text-muted mb-0">
+                                                                            <i class="bx bxs-star text-warning"></i>
+                                                                            <i class="bx bxs-star text-warning"></i>
+                                                                            <i class="bx bxs-star text-warning"></i>
+                                                                            <i class="bx bxs-star text-warning"></i>
+                                                                            <i class="bx bxs-star-half text-warning"></i>
+                                                                        </p>
+                                                                        <div class="row d-flex w-50">
+                                                                            <p class="text-muted mb-0 mt-1 col-md-6">
+                                                                                Quantity:
+                                                                                {{ $order->quantity }}</p>
+                                                                            <p class="col-md-6"><a
+                                                                                    href="{{ route('reviewProductPage', ['id' => $customer->id, 'order_id' => $order->id]) }}">Give
+                                                                                    Review</a></p>
+                                                                        </div>
+                                                                        <p class="text-muted mb-0 mt-1">
+                                                                            {{ $product->description }}
+                                                                        </p>
+                                                                    </td>
+                                                                    <td>{{ $order->amount }}</td>
+
+                                                                </tr>
+                                                            @break
+                                                        @endif
+                                                    @endforeach
+                                                @endforeach
+                                            @else
+                                                No Product to Review
+                                            @endif
+
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
                         </div>
+
+
                     </div>
                 </div>
-            </form>
-        </div>
-        </div>
-        </div>
+            </div>
+        </form>
+    </div>
+    </div>
+    </div>
 
 
 
-    </section>
+</section>
 
 @endsection

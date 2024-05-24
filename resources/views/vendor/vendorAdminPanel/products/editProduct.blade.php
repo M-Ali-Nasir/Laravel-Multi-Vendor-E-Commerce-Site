@@ -51,7 +51,9 @@
 
 
                 <div class="row marketing">
-                    <div class="col-lg-6">
+
+
+                    <div class="col-lg-6" @if (!($previousRouteName == 'vendor.productList')) style="display: none;" @endif>
                         <legend>Edit Product</legend>
 
                         <!-- Product Name-->
@@ -159,6 +161,7 @@
                         </div>
                     </div>
 
+
                     <div class="col-lg-6">
                         <div class="form-group mb-2">
 
@@ -224,7 +227,8 @@
                                                                     style="display: none"
                                                                     @endif @endforeach>
                                                                         <div class="">
-                                                                            <label for="img">Product image for this
+                                                                            <label for="img">Product image for
+                                                                                this
                                                                                 variation</label>
                                                                             <input id="img"
                                                                                 name="variations[{{ $loop->index }}][img]"
