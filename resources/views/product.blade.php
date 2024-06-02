@@ -1,28 +1,22 @@
  {{-- Slider --}}
- @php
+ {{-- @php
  if (Session::has('customer')) {
      $layout = 'user.userHome';
  }else {
      $layout = 'user.userHome';
  }
-@endphp
+@endphp --}}
 
 
-@extends($layout)
+ @extends('user.userHome')
 
-@section('title')
-{{ $product->name }}
-@endsection
+ @section('title')
+     {{ $product->name }}
+ @endsection
 
-@section('style')
+ @section('style')
+ @endsection
 
-@endsection
-
-@section('body')
-
-
-@include('components.productPage.productdetails')
-
-
-
-@endsection
+ @section('body')
+     @include('components.productPage.productdetails')
+ @endsection

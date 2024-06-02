@@ -1,5 +1,5 @@
  {{-- Slider --}}
- @php
+ {{-- @php
  if (Session::has('customer')) {
      $layout = 'user.userHome';
  }else {
@@ -21,4 +21,4 @@
 @include('components.categories.categoryProducts')
 
 
-@endsection
+@endsection --}}

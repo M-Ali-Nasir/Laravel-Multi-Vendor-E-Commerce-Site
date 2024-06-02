@@ -5,9 +5,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <head>
-        <link rel="icon" href="{{ asset('images/home/favicon.png') }}" type="image/png">
-    </head>
+
+    <link rel="icon" href="{{ asset('images/home/favicon.png') }}" type="image/png">
+
 
     <title>@yield('title')</title>
 
@@ -98,8 +98,8 @@
         </div>
     </main>
 
-
     @include('components.home.footer')
+
     @yield('javascript')
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

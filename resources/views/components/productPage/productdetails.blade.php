@@ -209,7 +209,7 @@
                                                 <div class="row">
                                                     <div
                                                         class="col-lg-2 d-flex justify-content-center align-items-center mb-4 mb-lg-0">
-                                                        <img src="{{ asset($customer->avatar ? 'Storage/customer/avatars/' . $customer->avatar : 'images/default/user.png') }}"
+                                                        <img src="{{ asset($r_customer->avatar ? 'Storage/customer/avatars/' . $r_customer->avatar : 'images/default/user.png') }}"
                                                             class="rounded-circle img-fluid shadow-1"
                                                             alt="woman avatar" width="100" height="100" />
                                                     </div>

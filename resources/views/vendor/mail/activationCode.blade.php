@@ -12,7 +12,7 @@
 
     <div>
         <h3>Dear {{ $vendor->name }},</h3>
-        <h4>Your varification code is: {{ $pin }}</h4>
+        <h4>Your verification code is: {{ $pin }}</h4>
     </div>
 </body>
 

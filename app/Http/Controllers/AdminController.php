@@ -39,7 +39,7 @@ class AdminController extends Controller
                 Session::put('admin', $admin);
                 return redirect()->route('admin.dashboard', ['id', $admin->id]);
             } else {
-                return redirect()->back()->with('error', 'Incorrect password address');
+                return redirect()->back()->with('error', 'Incorrect password');
             }
         } else {
             return redirect()->back()->with('error', 'Incorrect email address');

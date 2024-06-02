@@ -53,7 +53,7 @@
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col-xl-10">
                     @if (Session::has('error'))
-                        <div class="container text-light bg-danger text-center">
+                        <div class=" p-1 container text-light bg-danger text-center">
                             <h5>{{ Session::get('error') }}</h5>
                         </div>
                     @endif

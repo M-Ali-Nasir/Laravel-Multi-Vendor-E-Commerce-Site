@@ -1,14 +1,14 @@
  {{-- Slider --}}
- @php
+ {{-- @php
      if (Session::has('customer')) {
          $layout = 'user.userHome';
      } else {
          $layout = 'user.userHome';
      }
- @endphp
+ @endphp --}}
 
 
- @extends($layout)
+ @extends('user.userHome')
 
 
 
