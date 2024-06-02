@@ -1,10 +1,10 @@
 @if (count($categories) != 0)
-    <figure class="text-center mt-5">
+    <figure class="text-center mt-1">
         <blockquote class="blockquote">
-            <p>Shop Our Extensive Range of Categories</p>
+            <p>Shop Extensive Range of Categories</p>
         </blockquote>
         <figcaption class="blockquote-footer">
-            Discover Quality Items Across Various Categories
+            Discover items across various categories
         </figcaption>
     </figure>
 
@@ -20,7 +20,7 @@
 
 
 
-    <div class="slide-container swiper w-100">
+    <div class="slide-container swiper w-100 pt-2 pb-4 px-3">
         <div class="slide-content">
             <div class="card-wrapper swiper-wrapper">
                 @foreach ($categories as $category)

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContactUs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Models\Vendor\Store;
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\VendorContact;
 use App\Models\User\Customer;
 use App\Models\User\Cart;
+use App\Models\Vendor\Order;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -30,20 +33,41 @@ class HomeController extends Controller
             // Get the search query
             $searchQuery = $request->input('search');
 
+            if ($request->input('skip')) {
+                $skip = $request->input('skip');
+            } else {
+                $skip = 0;
+            }
+
+            $take = 12;
 
 
             $vendors = Vendor::where('status', 'active');
 
             $activeVendorIds = vendor::where('status', 'active')->pluck('id')->toArray();
-            $storesQuery = Store::whereIn('vendor_id', $activeVendorIds);
+
+            $topVendorIds = Order::join('vendors', 'orders.vendor_id', '=', 'vendors.id')
+                ->where('vendors.status', 'active') // Assuming the column 'is_active' indicates whether a vendor is active
+                ->select('orders.vendor_id', DB::raw('count(orders.vendor_id) as total'))
+                ->groupBy('orders.vendor_id')
+                ->orderBy('total', 'desc')
+                ->take(5)
+                ->pluck('orders.vendor_id')
+                ->toArray();
+
+            //dd($topVendorIds);
+
+
+            $storesQuery = Store::whereIn('vendor_id', $topVendorIds)
+                ->orderByRaw("FIELD(vendor_id, " . implode(',', $topVendorIds) . ")");
             // Retrieve orders for the vendor with pending status
             $storeIds = $storesQuery->pluck('id')->toArray();
             //$storesQuery = Store::whereIn('vendor_id', $activeVendorIds);
 
-
+            $productStoreIds =  Store::whereIn('vendor_id', $activeVendorIds)->pluck('id')->toArray();
 
             // Initialize the query builder for products
-            $productsQuery = Product::whereIn('store_id', $storeIds)->with('variations', 'paymentMethods', 'reviews');
+            $productsQuery = Product::whereIn('store_id', $productStoreIds)->with('variations', 'paymentMethods', 'reviews');
 
 
             $categoriesQuery = Product_categories::whereIn('vendor_id', $activeVendorIds);
@@ -56,19 +80,49 @@ class HomeController extends Controller
                 $categoriesQuery->where('name', 'like', '%' . $searchQuery . '%');
             }
 
+            //$productsQuery->orderBy('price', 'asc');
             // Get the filtered or all products
-            $products = $productsQuery->get();
+            $products = $productsQuery->skip($skip)->take($take)->get();
 
             // Get all stores, categories, and vendors
             $stores = $storesQuery->get();
             $categories = $categoriesQuery->get();
 
-            //dd($products);
+            //dd($stores);
 
 
 
             return view('user.home', compact('stores', 'products', 'categories', 'vendors', 'searchQuery', 'allcategories'));
         }
+    }
+
+    public function loadMoreProducts(Request $request)
+    {
+        $skip = $request->input('skip');
+        $take = 12; // Number of products to load per request
+        $searchQuery = $request->input('search');
+
+        $activeVendorIds = Vendor::where('status', 'active')->pluck('id')->toArray();
+        $topVendorIds = Order::join('vendors', 'orders.vendor_id', '=', 'vendors.id')
+            ->where('vendors.status', 'active')
+            ->select('orders.vendor_id', DB::raw('count(orders.vendor_id) as total'))
+            ->groupBy('orders.vendor_id')
+            ->orderBy('total', 'desc')
+            ->take(5)
+            ->pluck('orders.vendor_id')
+            ->toArray();
+
+        $storeIds = Store::whereIn('vendor_id', $topVendorIds)->pluck('id')->toArray();
+        $productsQuery = Product::whereIn('store_id', $storeIds)->with('variations', 'paymentMethods', 'reviews');
+
+        if ($searchQuery) {
+            $productsQuery->where('name', 'like', '%' . $searchQuery . '%');
+        }
+
+        $productsQuery->orderBy('price', 'asc');
+        $products = $productsQuery->skip($skip)->take($take)->get();
+
+        return response()->json($products);
     }
 
     public function privayPolicy()
@@ -232,5 +286,21 @@ class HomeController extends Controller
         } else {
             return view('category', compact('category', 'store', 'vendor', 'products', 'allcategories'));
         }
+    }
+
+    public function contactUsMail(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'subject' => 'required',
+            'message' => 'required',
+        ]);
+
+        $fromEmail = $validated['email'];
+        $toEmail = 'marketplaceconnectofficial@gmail.com';
+        Mail::to($toEmail)->send(new ContactUs($validated));
+
+        return redirect()->back()->with('success', 'Email Sent Successfully');
     }
 }

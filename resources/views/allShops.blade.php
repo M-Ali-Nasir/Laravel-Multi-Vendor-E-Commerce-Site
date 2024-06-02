@@ -35,26 +35,26 @@
 
 @section('body')
 
-    @include('components.home.slider')
+    {{-- @include('components.home.slider') --}}
 
 
     @if (count($stores) != 0)
         <figure class="text-center mt-5">
             <blockquote class="blockquote">
-                <p>Top Stores: Discover the Best Sellers</p>
+                <p>Discover the Best Selling Stores</p>
             </blockquote>
             <figcaption class="blockquote-footer">
-                Explore a curated selection of top-rated stores, handpicked for you
+                Explore a curated selection of top-rated stores only for you
             </figcaption>
         </figure>
 
 
 
-        <div class="container d-flex justify-content-center w-100">
-            <div class="row d-flex justify-content-center w-100">
+        <div class="container w-100">
+            <div class="row w-100">
                 <div class="col-md-12">
                     <!-- Product Cards -->
-                    <div class="row">
+                    <div class="row d-flex justify-content-center">
                         <!-- Product Cards Here -->
                         <!-- Add more product cards as needed -->
 

@@ -30,16 +30,16 @@
 
     <figure class="text-center mt-5">
         <blockquote class="blockquote">
-            <p>Top Stores: Discover the Best Sellers</p>
+            <p>Discover the Best Sellers</p>
         </blockquote>
         <figcaption class="blockquote-footer">
-            Explore a curated selection of top-rated stores, handpicked for you
+            Explore a curated selection of top-rated stores only for you
         </figcaption>
     </figure>
 
 
 
-    <div class="container">
+    <div class="container py-2">
         <div class="row align-items-center justify-content-center">
 
 

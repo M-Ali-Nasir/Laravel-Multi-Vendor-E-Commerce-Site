@@ -583,7 +583,7 @@ class VendorController extends Controller
 
 
 
-            dd(Session::get('orderDelivered'));
+            //dd(Session::get('orderDelivered'));
             // $toEmail = $customer->email;
             // Mail::to($toEmail)->send(new UserOrderSent($customer, $order, $product));
 
@@ -698,13 +698,14 @@ class VendorController extends Controller
 
     public function paymentHistory($id)
     {
-        if (Session::has('venodr')) {
+
+        if (Session::has('vendor')) {
 
             $vendor = Vendor::where('id', $id)->first();
 
             $ordersId = Order::where('vendor_id', $vendor->id)->pluck('customer_id')->toArray();
 
-            $orders = Order::where('vendor_id', $vendor->id)->get();
+            $orders = Order::where('vendor_id', $vendor->id);
 
             // Retrieve orders for the vendor with pending status
             $customers = Customer::whereIn('id', $ordersId)->get();
@@ -717,7 +718,7 @@ class VendorController extends Controller
             $recievedPayments = Order::where('vendor_id', $vendor->id)
                 ->WhereIn('id', $recievedPaymentsIds)
                 ->get();
-            $recievedPayments1 = Order::where('vendor_id', $vendor->id)
+            $recievedPayments1 = $orders
                 ->where('payment_method', "Card")
                 ->get();
 
@@ -741,7 +742,7 @@ class VendorController extends Controller
             }
 
             $totalEarned = $pendingPayment + $recievedPayment;
-
+            $orders = $orders->get();
 
             $orderHistories = new Collection();
 
@@ -756,13 +757,15 @@ class VendorController extends Controller
             $pendingOrderIds = OrderHistory::where('status', 'Pending')->pluck('order_id')->toArray();
 
             // Retrieve orders for the vendor with pending status
-            $orders = Order::where('vendor_id', $vendor->id)
+            $orders1 = Order::where('vendor_id', $vendor->id)
                 ->whereIn('id', $pendingOrderIds)
                 ->get();
-            $pendingOrders = count($orders);
+            $pendingOrders = count($orders1);
+
+
             return view('vendor.vendorAdminPanel.paymentHistory', compact('totalEarned', 'pendingPayment', 'recievedPayment', 'vendor', 'orders', 'customers', 'orderHistories', 'pendingOrders'));
         } else {
-            return redirect()->rotue('home');
+            return redirect()->route('home');
         }
     }
 

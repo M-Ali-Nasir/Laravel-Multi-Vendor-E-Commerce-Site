@@ -39,6 +39,10 @@
 
         @include('components.shoppage.categories')
         @include('components.shoppage.products')
+
+        <div class="container text-center w-50 my-0 py-0">
+            <hr>
+        </div>
     @else
         @if ($searchQuery)
             <div class="container mt-5 mb-5 d-flex justify-content-center">

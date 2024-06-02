@@ -61,6 +61,10 @@ class VendorAuthController extends Controller
 
         $vendor = Vendor::where('email', $validated['email'])->first();
 
+        if ($vendor && $vendor->status == 'banned') {
+            return redirect()->back()->withErrors(['error' => 'Your account is ' . $vendor->status . '. Please Contact with Market Place Connect for more details']);
+        }
+
         if ($vendor && Hash::check($validated['password'], $vendor->password)) {
             // Password is correct
             // Proceed with login...

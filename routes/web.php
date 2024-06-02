@@ -13,12 +13,16 @@ use App\Http\Controllers\Vendor\BankDetailsController;
 use App\Http\Controllers\Vendor\VendorFacebookController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\User\Cart;
+use App\Http\Controllers\AdminController;
 
 
 
 
 // Home Page
 Route::get('/', [HomeController::class, 'home'])->name('home');
+
+// Load More Products
+Route::get('/more-products', [HomeController::class, 'loadMoreProducts'])->name('loadMoreProducts');
 
 Route::get('/forget_password', [AuthController::class, 'userForgetPassword'])->name('userForgetPassword');
 Route::get('/vendor/forget_password', [VendorAuthController::class, 'vendorForgetPassword'])->name('vendorForgetPassword');
@@ -196,3 +200,29 @@ Route::get('vendor/admin/{id}/payments-history', [VendorController::class, 'paym
 
 Route::get('vendor/admin/{id}/activation-varification', [VendorAuthController::class, 'activation'])->name('activation');
 Route::post('venor/admin/activate/{id}', [VendorAuthController::class, 'activateVendor'])->name('activate');
+
+//Route to contact us
+
+Route::post('/home/contact-us-by-mail', [HomeController::class, 'contactUsMail'])->name('contactUsMail');
+
+
+
+//      ADMIN ROUETS
+
+Route::get('/admin/login', [AdminController::class, 'loginPage'])->name('admin.loginPage');
+Route::get('/admin/register', [AdminController::class, 'registerPage'])->name('admin.registerPage');
+Route::get('/admin/dashboard/{id}/logged-in', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+Route::get('/admin/dashboard/{id}/customers', [AdminController::class, 'customersPage'])->name('admin.customers');
+Route::get('/admin/dashboard/{id}/vendors', [AdminController::class, 'vendorsPage'])->name('admin.vendors');
+
+//login Admin 
+
+Route::post('/admin/login-admin', [AdminController::class, 'loginAdmin'])->name('admin.login');
+Route::post('/admin/logout-admin', [AdminController::class, 'logoutAdmin'])->name('admin.logout');
+
+Route::get('/admin/customer/{customer_id}/change-status-active', [AdminController::class, 'statusCustomerActive'])->name('admin.activeCustomer');
+Route::get('/admin/customer/{customer_id}/change-status-inactive', [AdminController::class, 'statusCustomerInactive'])->name('admin.inactiveCustomer');
+Route::get('/admin/customer/{customer_id}/change-status-ban', [AdminController::class, 'statusCustomerBan'])->name('admin.banCustomer');
+Route::get('/admin/vendor/{vendor_id}/change-status-inactive', [AdminController::class, 'statusVendorInactive'])->name('admin.inactiveVendor');
+Route::get('/admin/vendor/{vendor_id}/change-status-ban', [AdminController::class, 'statusVendorBan'])->name('admin.banVendor');
+Route::get('/admin/vendor/{vendor_id}/change-status-active', [AdminController::class, 'statusVendorActive'])->name('admin.activeVendor');

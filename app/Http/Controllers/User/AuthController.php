@@ -17,33 +17,38 @@ use App\Mail\ForgetPassword;
 use App\Mail\PasswordRestSuccessful;
 use Illuminate\Support\Facades\Crypt;
 use App\Models\User\Cart as UserCart;
+use App\Models\Vendor\Order;
+use Illuminate\Support\Facades\DB;
 
 
 class AuthController extends Controller
 {
     // viewing the Authentication pages fro customer
-    public function loginPage(Request $request){
-        
-        if (isset($request->quantity)){
+    public function loginPage(Request $request)
+    {
+
+        if (isset($request->quantity)) {
 
             $validated = $request->validate([
                 'quantity' => 'required|min:1|max:10',
                 'price' => 'required',
                 'variation' => 'required'
             ]);
-            $productData = $request->only(['quantity','variation','price','productId']);
-            Session::put('productData',$productData);
+            $productData = $request->only(['quantity', 'variation', 'price', 'productId']);
+            Session::put('productData', $productData);
         }
         return view('user.userlogin');
     }
 
-    public function registerPage(){
+    public function registerPage()
+    {
         return view('user.userregister');
     }
 
     //registering new customers
 
-    public function registerUser(Request $request){
+    public function registerUser(Request $request)
+    {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:customers,email',
@@ -54,7 +59,7 @@ class AuthController extends Controller
         $user->name = $validated['name'];
         $user->email = $validated['email'];
         $user->password = Hash::make($validated['password']);
-        
+
         $user->save();
 
         //sending welcome email to user 
@@ -66,8 +71,9 @@ class AuthController extends Controller
         return redirect('/login');
     }
 
-    public function loginUser(Request $request){
-        
+    public function loginUser(Request $request)
+    {
+
         //dd(Session::get('productData'));
         $validated = $request->validate([
             'email' => 'required',
@@ -76,56 +82,86 @@ class AuthController extends Controller
 
         $customer = Customer::where('email', $validated['email'])->first();
 
+        if ($customer && $customer->status != 'active') {
+            return redirect()->back()->withErrors(['error' => 'Your account is ' . $customer->status . '. Please Contact with Market Place Connect for more details']);
+        }
+
         if ($customer && Hash::check($validated['password'], $customer->password)) {
             // Password is correct
             // Proceed with login...
             Session::put('customer', $customer);
-            if(Session::has('productData')){
+            if (Session::has('productData')) {
                 $productData =  Session::get('productData');
 
                 return redirect()->route('addToCart', ['customerId' => $customer->id, 'productId' => $productData['productId']]);
-            }else{
-                return redirect()->route('customerIndex',['customerName', $customer->id]);
+            } else {
+                return redirect()->route('customerIndex', ['customerName', $customer->id]);
             }
-            } elseif($customer) {
+        } elseif ($customer) {
             // Password is incorrect
             // Handle invalid login...
             return redirect()->back()->withErrors(['error' => 'Invalid Password']);
         }
         return redirect()->back()->withErrors(['error' => 'Invalid Email']);
-
     }
 
-    public function logoutUser(){
-        if(Session::has('customer')){
+    public function logoutUser()
+    {
+        if (Session::has('customer')) {
             Session::forget('customer');
             return redirect()->route('home');
         }
         return redirect()->route('home');
     }
 
-    public function customerIndex(Request $request, $customerName){
-        if(Session::has('customer')){
+    public function customerIndex(Request $request, $customerName)
+    {
+        if (Session::has('customer')) {
             $customer = Session::get('customer');
             $customer = Customer::where('id', $customer->id)->first();
+            $skip = 0;
+            if ($request->input('skip')) {
+                $skip = $request->input('skip');
+            }
 
-            $searchQuery = $request->input('search');
+            $take = 12;
+            //$searchQuery = $request->input('search');
 
-            
-            
+            $searchQuery = Session::get('searchQuery');
+
+
             $vendors = Vendor::where('status', 'active');
 
             $activeVendorIds = vendor::where('status', 'active')->pluck('id')->toArray();
-            $storesIds = Store::whereIn('vendor_id', $activeVendorIds)->pluck('id')->toArray();
+
+            //top vendor Id's
+
+            $topVendorIds = Order::join('vendors', 'orders.vendor_id', '=', 'vendors.id')
+                ->where('vendors.status', 'active') // Assuming the column 'is_active' indicates whether a vendor is active
+                ->select('orders.vendor_id', DB::raw('count(orders.vendor_id) as total'))
+                ->groupBy('orders.vendor_id')
+                ->orderBy('total', 'desc')
+                ->take(5)
+                ->pluck('orders.vendor_id')
+                ->toArray();
+
+
+            // $storesIds = Store::whereIn('vendor_id', $activeVendorIds)->pluck('id')->toArray();
+            // // Retrieve orders for the vendor with pending status
+            // $storesQuery = Store::whereIn('vendor_id', $activeVendorIds);
+
+
+            $storesQuery = Store::whereIn('vendor_id', $topVendorIds)
+                ->orderByRaw("FIELD(vendor_id, " . implode(',', $topVendorIds) . ")");
             // Retrieve orders for the vendor with pending status
-            $storesQuery = Store::whereIn('vendor_id', $activeVendorIds);
+            $storesIds = $storesQuery->pluck('id')->toArray();
 
-
+            $productStoreIds =  Store::whereIn('vendor_id', $activeVendorIds)->pluck('id')->toArray();
 
             // Initialize the query builder for products
-            $productsQuery = Product::with('variations', 'paymentMethods')->whereIn('store_id', $storesIds);
+            $productsQuery = Product::with('variations', 'paymentMethods', 'reviews')->whereIn('store_id', $productStoreIds);
 
-            
+
             $categoriesQuery = Product_categories::whereIn('vendor_id', $activeVendorIds);
 
             $allcategories = Product_categories::whereIn('vendor_id', $activeVendorIds)->get();
@@ -136,51 +172,54 @@ class AuthController extends Controller
                 $categoriesQuery->where('name', 'like', '%' . $searchQuery . '%');
             }
 
+            //$productsQuery->orderBy('price', 'asc');
             // Get the filtered or all products
-            $products = $productsQuery->get();
-            
+            $products = $productsQuery->skip($skip)->take($take)->get();
+
             // Get all stores, categories, and vendors
             $stores = $storesQuery->get();
             $categories = $categoriesQuery->get();
 
-            $cartAmount =0;
+            $cartAmount = 0;
             $totalcart = UserCart::where('customer_id', $customer->id)->get();
             foreach ($totalcart as $key => $number) {
                 $cartAmount++;
             }
 
-            return view('user.home', compact('customer','stores','products','categories','vendors', 'searchQuery','allcategories','cartAmount'));
-        }else{
+            return view('user.home', compact('customer', 'stores', 'products', 'categories', 'vendors', 'searchQuery', 'allcategories', 'cartAmount'));
+        } else {
             return redirect()->route('home');
         }
     }
 
-    public function userForgetPassword(){
+    public function userForgetPassword()
+    {
         $user = "customer";
-        return view('forgetPassword',compact('user'));
+        return view('forgetPassword', compact('user'));
     }
 
-    public function forgetPasswordSendMail(Request $request){
+    public function forgetPasswordSendMail(Request $request)
+    {
 
         $validated = $request->validate([
             'email' => 'required|email',
         ]);
         $user = Customer::where('email', $validated['email'])->first();
-        if(isset($user)){
+        if (isset($user)) {
             $usertype = "customer";
             Mail::to($validated['email'])->send(new ForgetPassword($usertype, $user));
-            return redirect()->back()->with('success',"Check your Inbox");
+            return redirect()->back()->with('success', "Check your Inbox");
         }
-        return redirect()->back()->with('error',"No user found with this email");
-
+        return redirect()->back()->with('error', "No user found with this email");
     }
 
-    public function resetPassword(Request $request, $id){
+    public function resetPassword(Request $request, $id)
+    {
         $validated = $request->validate([
             'password' => 'required',
         ]);
 
-        if($request->usertype == "customer"){
+        if ($request->usertype == "customer") {
             $user = Customer::where('id', $id)->first();
             $user->password = Hash::make($validated['password']);
 
@@ -190,7 +229,7 @@ class AuthController extends Controller
             Mail::to($user->email)->send(new PasswordRestSuccessful($user));
 
             return redirect()->route('customerLogin');
-        }elseif ($request->usertype == "vendor") {
+        } elseif ($request->usertype == "vendor") {
             $user = Vendor::where('id', $id)->first();
             $user->password = Hash::make($validated['password']);
 
@@ -203,7 +242,8 @@ class AuthController extends Controller
         }
     }
 
-    public function resetPasswordView($id , $usertype){
+    public function resetPasswordView($id, $usertype)
+    {
 
         $user_id = Crypt::decryptString($id);
         // Parse the data (assuming JSON format)
@@ -212,12 +252,11 @@ class AuthController extends Controller
         $type = Crypt::decryptString($usertype);
         // Parse the data (assuming JSON format)
         $usertype = json_decode($type, true);
-        if(Session::has('resetRoute')){
+        if (Session::has('resetRoute')) {
             $usertype = $usertype['usertype'];
             $user_id = $id['id'];
-            return view('resetPassword',compact('user_id','usertype'));
+            return view('resetPassword', compact('user_id', 'usertype'));
         }
         return redirect()->route('home');
-        
     }
 }

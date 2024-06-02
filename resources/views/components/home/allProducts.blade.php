@@ -6,6 +6,7 @@
     .card {
         border-radius: 7px !important;
         border-color: #e1e7ec;
+
     }
 
     .card:hover {
@@ -82,7 +83,7 @@
 
 
 @if (count($products) != 0)
-    <figure class="text-center mt-5">
+    <figure class="text-center mt-4">
         <blockquote class="blockquote">
             <p>Browse All Products</p>
         </blockquote>
@@ -97,13 +98,13 @@
         <div class="row">
             <div class="col-md-12">
                 <!-- Product Cards -->
-                <div class="row">
+                <div class="row" id="product-list">
                     <!-- Product Cards Here -->
                     <!-- Add more product cards as needed -->
 
 
                     @foreach ($products as $product)
-                        <div class="col-md-3 col-sm-6 p-2">
+                        <div class="col-md-3 col-sm-6 p-2 ">
                             <div class="card mb-30 border-0">
                                 <a class="card-img-tiles"
                                     href="{{ route('productView', ['product_id' => $product->id]) }}" data-abc="true">
@@ -126,8 +127,8 @@
                                     </div>
                                 </a>
                                 <div class="card-body text-center justify-content-center">
-                                    <h4 class="text-truncate card-title">{{ $product->name }}</h4>
-                                    <p class="text-muted">Starting from {{ $product->price }} PKR/-</p>
+                                    <h5 class="text-truncate card-title">{{ $product->name }}</h5>
+                                    <p class="text-muted">Starting from Rs.{{ $product->price }}/-</p>
 
                                     @php
                                         $totalReviews = 0;
@@ -164,6 +165,12 @@
 
 
                 </div>
+                @if ($products->count() > 11 && !request()->routeIs('categoryPage'))
+                    <div class="d-flex justify-content-center mb-3 mt-2">
+                        <button id="load-more" data-skip="{{ count($products) }}" data-search="{{ $searchQuery }}"
+                            class="btn btn-outline-warning" style="width:40%"><b>Load More</b></button>
+                    </div>
+                @endif
             </div>
         </div>
         <!-- Pagination -->
@@ -185,4 +192,97 @@
         </div>
     </div> --}}
     </div>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#load-more').on('click', function() {
+                var skip = $(this).data('skip');
+                var search = $(this).data('search');
+
+                $.ajax({
+                    url: "{{ route('loadMoreProducts') }}",
+                    method: 'GET',
+                    data: {
+                        skip: skip,
+                        search: search
+                    },
+                    success: function(response) {
+                        if (response.length > 0) {
+                            response.forEach(function(product) {
+                                var totalReviews = 0;
+                                var count = product.reviews.length;
+
+                                product.reviews.forEach(function(review) {
+                                    totalReviews += review.rating;
+                                });
+
+                                if (count > 0) {
+                                    totalReviews = totalReviews / count;
+                                }
+                                var totalReviews = Math.floor(totalReviews);
+                                var emptyStars = 5 - totalReviews;
+                                var reviewStars = '';
+
+                                for (var i = 0; i < totalReviews; i++) {
+                                    reviewStars +=
+                                        '<li class="list-inline-item"><i class="bi bi-star-fill"></i></li>';
+                                }
+                                for (var i = 0; i < emptyStars; i++) {
+                                    reviewStars +=
+                                        '<li class="list-inline-item"><i class="bi bi-star"></i></li>';
+                                }
+                                $('#product-list').append(
+                                    '<div class="col-md-3 col-sm-6 p-2">' +
+                                    '<div class="card mb-30 border-0">' +
+                                    '<a class="card-img-tiles" href="/productView/' +
+                                    product.id + '" data-abc="true">' +
+                                    '<div class="inner">' +
+                                    '<div class="main-img">' +
+                                    '<img src="/storage/vendor/products/images/' +
+                                    product.image +
+                                    '" style="height: 200px; width: 100%;" alt="Category">' +
+                                    '</div>' +
+                                    '<div class="thumblist">' +
+                                    '<marquee direction="up" behavior="scroll" scrollamount="3" style="height: 200px;">' +
+                                    product.variations.map(function(variation) {
+                                        return '<img class="mb-1" src="/storage/vendor/products/images/' +
+                                            variation.pivot.image +
+                                            '" style="width: auto; max-width: 100%;" alt="Category">';
+                                    }).join('') +
+                                    '</marquee>' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '</a>' +
+                                    '<div class="card-body text-center justify-content-center">' +
+                                    '<h5 class="text-truncate card-title">' +
+                                    product.name + '</h5>' +
+                                    '<p class="text-muted">Starting from Rs.' +
+                                    product.price + '/-</p>' +
+                                    '<div class="star-rating">' +
+                                    '<ul class="list-inline">' +
+                                    reviewStars +
+                                    '(' + count + ')' +
+                                    '</ul>' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '</div>'
+                                );
+                            });
+
+                            $('#load-more').data('skip', skip + response.length);
+                        } else {
+                            $('#load-more').text('No More Products').prop('disabled', true);
+                        }
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
 @endif

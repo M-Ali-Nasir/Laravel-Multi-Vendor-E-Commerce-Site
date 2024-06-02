@@ -29,6 +29,7 @@ class ProductController extends Controller
     {
         if (Session::has('customer')) {
             $customer = Session::get('customer');
+            $customer = Customer::where('id', $customer->id)->first();
             $customerId = $customer->id;
             $allcategories = Product_categories::all();
             $customers = Customer::all();
@@ -727,7 +728,7 @@ class ProductController extends Controller
             foreach ($reviewableOrders as $orders) {
                 //dd($order->id);
                 if ($orders->id == $order->id) {
-                    $product = Product::where('id', $order->product_id)->with('variations')->first();
+                    $product = Product::where('id', $order->product_id)->with('variations', 'reviews')->first();
                     $variations = Variations::all();
                     $cartAmount = 0;
                     $totalcart = Cart::where('customer_id', $customer->id)->get();

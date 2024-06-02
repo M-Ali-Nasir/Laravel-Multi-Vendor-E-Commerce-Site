@@ -10,7 +10,7 @@
 
 
     {{-- NAV BAR --}}
-    <div class="bg-light py-3">
+    <div class="bg-white py-3">
 
         <nav class="navbar navbar-expand-lg shadow-lg w-100 rounded-5" style="background-color:rgb(255, 255, 255)">
             <div class="container-fluid">
@@ -26,10 +26,10 @@
                             <a class="nav-link text-dark active" aria-current="page" href="{{ route('home') }}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" aria-current="page" href="{{ route('aboutPage') }}">About</a>
+                            <a class="nav-link text-dark" aria-current="page" href="{{ route('allShopsPage') }}">Stores</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" aria-current="page" href="{{ route('allShopsPage') }}">Stores</a>
+                            <a class="nav-link text-dark" aria-current="page" href="{{ route('aboutPage') }}">About</a>
                         </li>
 
                         @if (request()->routeIs('ShopPage'))
@@ -98,7 +98,7 @@
 
 
 
-@include('components.home.footer')
+{{-- @include('components.home.footer') --}}
 
 
 @endsection

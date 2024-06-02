@@ -337,10 +337,10 @@
                                 <input class="form-control mt-3" type="file" placeholder="Select New Image"
                                     name="avatar">
                             </span></div>
-                        <div class="text-center">
+                        {{-- <div class="text-center">
                             <a class="btn btn-warning" href="{{ route('trackOrders', ['id' => $customer->id]) }}">Track
                                 Orders</a>
-                        </div>
+                        </div> --}}
                     </div>
                     <div class="col-md-5 border-right">
                         <div class="p-3 py-5">
@@ -404,7 +404,7 @@
 
                             <div class="card checkout-order-summary">
                                 <div class="card-body">
-                                    <div class="p-3 mb-3">
+                                    <div class="px-3 mb-3">
                                         <h5 class="font-size-24 mb-0">Order History
                                         </h5>
                                     </div>
@@ -464,10 +464,8 @@
 
                             <div class="card checkout-order-summary">
                                 <div class="card-body">
-                                    <div class="p-3 mb-3">
-                                        <h5 class="font-size-24 mb-0">Review Products <p class="text-muted small">(click
-                                                product to
-                                                review)</p>
+                                    <div class="px-3 mb-3">
+                                        <h5 class="font-size-24 mb-0">Review Products
                                         </h5>
                                     </div>
                                     <div class="table-responsive">
@@ -505,13 +503,13 @@
                                                                             <i class="bx bxs-star text-warning"></i>
                                                                             <i class="bx bxs-star-half text-warning"></i>
                                                                         </p>
-                                                                        <div class="row d-flex w-50">
+                                                                        <div class="row d-flex w-100">
                                                                             <p class="text-muted mb-0 mt-1 col-md-6">
                                                                                 Quantity:
                                                                                 {{ $order->quantity }}</p>
                                                                             <p class="col-md-6"><a
-                                                                                    href="{{ route('reviewProductPage', ['id' => $customer->id, 'order_id' => $order->id]) }}">Give
-                                                                                    Review</a></p>
+                                                                                    href="{{ route('reviewProductPage', ['id' => $customer->id, 'order_id' => $order->id]) }}">Review</a>
+                                                                            </p>
                                                                         </div>
                                                                         <p class="text-muted mb-0 mt-1">
                                                                             {{ $product->description }}

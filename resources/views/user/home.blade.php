@@ -37,9 +37,11 @@
      @endif
 
 
+     @include('components.home.topStores')
+
      @include('components.home.categories')
 
-     @include('components.home.topStores')
+
 
      @include('components.home.allProducts')
  @else

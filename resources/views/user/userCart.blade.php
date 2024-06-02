@@ -63,7 +63,7 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th scope="col" class="h5">Shopping Bag</th>
+                                    <th scope="col" class="h5">Shopping Cart</th>
                                     <th scope="col">Category</th>
                                     <th scope="col">Quantity</th>
                                     <th scope="col">Price per Item</th>
@@ -107,12 +107,12 @@
                                                     </td>
                                                     <td class="align-middle">
                                                         <p class="mb-0" style="font-weight: 500;" id="PricePerItem">
-                                                            {{ $item->price }}
+                                                            Rs. {{ $item->price * 1 }}/-
                                                         </p>
                                                     </td>
                                                     <td class="align-middle">
                                                         <p class="mb-0" style="font-weight: 500;" id="totalPrice">
-                                                            {{ $item->price * $item->quantity }}
+                                                            Rs. {{ $item->price * $item->quantity }}/-
                                                         </p>
                                                     </td>
                                                     <td class="align-middle">
@@ -220,19 +220,19 @@
                                         <div class="">
                                             <div class="d-flex justify-content-between" style="font-weight: 500;">
                                                 <p class="mb-2">Subtotal: </p>&nbsp; &nbsp;
-                                                <p class="mb-2">{{ $totalPrice . ' pkr' }}</p>
+                                                <p class="mb-2">{{ ' Rs. ' . $totalPrice }}/-</p>
                                             </div>
 
                                             <div class="d-flex justify-content-between" style="font-weight: 500;">
                                                 <p class="mb-0">Shipping: </p>&nbsp;&nbsp;
-                                                <p class="mb-0">{{ $shippingFee . ' pkr' }}</p>
+                                                <p class="mb-0">{{ ' Rs. ' . $shippingFee }}/-</p>
                                             </div>
 
                                             <hr class="my-4">
 
                                             <div class="d-flex justify-content-between mb-4" style="font-weight: 500;">
-                                                <p class="mb-2">Total pkr (tax + shipping included)</p>
-                                                <p class="mb-2">{{ $totalPrice + $shippingFee + $tax }} pkr</p>
+                                                <p class="mb-2">Total (Tax + Shipping Fee)&nbsp;</p>
+                                                <p class="mb-2">Rs. {{ $totalPrice + $shippingFee + $tax }}/-</p>
                                             </div>
 
                                             {{-- checkout address page --}}

@@ -354,7 +354,9 @@ class UserController extends Controller
                 $cartAmount++;
             }
 
-            return view('user.trackOrders', compact('customer', 'cartAmount'));
+            $orders = Order::where('customer_id', $customer->id)->with('orderHistory', 'product', 'variation')->get();
+
+            return view('user.trackOrders', compact('customer', 'cartAmount', 'orders'));
         } else {
             return redirect()->route('home');
         }

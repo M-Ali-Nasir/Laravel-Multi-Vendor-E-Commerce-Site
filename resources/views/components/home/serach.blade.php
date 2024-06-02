@@ -3,7 +3,7 @@
     @csrf
 
     <div class="input-group rounded-5">
-        <input type="text" class="form-control form-control-lg text-light" value="{{ $searchQuery }}"
+        <input type="text" class="form-control form-control-lg text-dark" value="{{ $searchQuery }}"
             style="width: 200px; height:20px; background-color:rgba(255, 255, 255, 0.925);" placeholder="Search..."
             name="search" />
         <button class="btn btn-outline-warning" type="submit">

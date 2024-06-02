@@ -8,7 +8,7 @@
 
 @section('body')
 
-    @include('components.home.slider')
+    {{-- @include('components.home.slider') --}}
 
     {{-- <figure class="text-center mt-5">
         <blockquote class="blockquote">
@@ -30,7 +30,7 @@
             transactions are effortless, and shopping is an enjoyable adventure.
         </p>
     </div> --}}
-    <h6 class="text-center mt-5 mb-3 text-decoration-underline">{{ $category->name }}</h6>
+    <h4 class="text-center mt-5 mb-3 ">Category: {{ $category->name }}</h4>
     @include('components.home.allProducts')
 
 

@@ -9,6 +9,7 @@ use App\Models\Vendor\Products\Product;
 use App\Models\Vendor\Products\Variations;
 use App\Models\Vendor\paymentMethod;
 use App\Models\User\Customer;
+use App\Models\Vendor\OrderHistory;
 
 class Order extends Model
 {
@@ -46,5 +47,10 @@ class Order extends Model
     public function paymentMethod()
     {
         return $this->belongsTo(PaymentMethod::class);
+    }
+
+    public function orderHistory()
+    {
+        return $this->hasMany(OrderHistory::class);
     }
 }

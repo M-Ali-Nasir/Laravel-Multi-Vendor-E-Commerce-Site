@@ -62,7 +62,8 @@
             -webkit-box-shadow: 0 2px 3px #e4e8f0;
             box-shadow: 0 2px 3px #e4e8f0;
             height: 300px;
-            overflow-y: scroll;
+            overflow: scroll;
+
         }
 
         .card {
@@ -299,13 +300,13 @@
 
 
     <section style="background-color: #eee;">
-        <div class="container py-5">
-            <div class="row justify-content-center mb-3">
+        <div class="container p-5">
+            <div class="row justify-content-center mb-0">
                 <div class="col-md-12 col-xl-10">
-                    <div class="card shadow-0 border rounded-3">
+                    <div class="card shadow-0 border rounded-0 m-0">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
+                                <div class="col-md-12 col-lg-3 col-xl-3 mb-0 mb-lg-0">
                                     <div class="bg-image hover-zoom ripple rounded ripple-surface">
                                         <div class="container" style="max-height: 250px; overflow-y:auto">
                                             <img src="{{ asset('storage/vendor/products/images/' . $product->image) }}"
@@ -322,13 +323,31 @@
                                 <div class="col-md-12 col-lg-12 col-xl-6">
                                     <h5>{{ $product->name }}</h5>
                                     <div class="d-flex flex-row">
-                                        <div class="text-danger mb-1 me-2">
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
+                                        @php
+                                            $totalReviews = 0;
+                                            $count = 0;
+                                            foreach ($product->reviews as $key => $review) {
+                                                $totalReviews += $review->rating;
+                                                $count += 1;
+                                            }
+                                            if ($count != 0) {
+                                                $totalReviews = $totalReviews / $count;
+                                            }
+
+                                        @endphp
+
+
+                                        <div class="star-rating">
+                                            <ul class="list-inline">
+                                                @for ($i = 0; $i < $totalReviews; $i++)
+                                                    <li class="list-inline-item"><i class="bi bi-star-fill"></i></li>
+                                                @endfor
+                                                @for ($i = $totalReviews; $i < 5; $i++)
+                                                    <li class="list-inline-item"><i class="bi bi-star"></i></li>
+                                                @endfor
+                                                ({{ $count }})
+                                            </ul>
                                         </div>
-                                        <span>310</span>
                                     </div>
 
                                     <div class="mt-1 mb-0 text-muted small">
@@ -342,7 +361,7 @@
 
                                     </div>
 
-                                    <p class="text-truncate mb-4 mb-md-0">
+                                    <p class=" mb-4 mb-md-0">
                                         {{ $product->description }}
                                     </p>
                                 </div>
@@ -353,15 +372,15 @@
                 </div>
             </div>
 
-            <div class="text-center">
-                <h4 class="text-center">Review Section</h4>
-            </div>
-            <div class="container d-flex justify-content-center">
 
-                <div class="container w-50">
+            <div class="container mt-0 py-0 d-flex justify-content-center">
 
+                <div class="card rounded-0" style="width: 86.5%;">
+                    <div class="text-center">
+                        <h4 class="text-center">Review Section</h4>
+                    </div>
                     <form action="{{ route('reviewProduct', ['id' => $customer->id, 'order_id' => $order->id]) }}"
-                        class="form-control" method="post">
+                        class="form-control rounded-3 border border-0" method="post">
                         @csrf
                         <label class="form-label" for="rating">Rate product out of 5:</label>
                         <input class="form-control" type="number" id="rating" max="5" name="rating">

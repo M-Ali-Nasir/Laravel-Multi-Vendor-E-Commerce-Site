@@ -41,7 +41,7 @@
                                     <p class="text-success p-0 m-0">Active Vendor</p>
                                 @endif
                             </div>
-                            <div class="mb-3">
+                            {{-- <div class="mb-3">
 
                                 <label class="float-start" for="token">Facebook Token</label>
                                 <input type="text" class="form-control" id="token" value="" name="token"
@@ -49,7 +49,7 @@
 
                             </div>
                             <a href="{{ route('vendor.facebook.connect') }}" class="btn btn-primary">Connect with facebook
-                                page</a>
+                                page</a> --}}
                         </div>
                     </div>
 
@@ -86,7 +86,7 @@
 
                                 {{-- Fb Details --}}
 
-                                <div class="mb-3">
+                                {{-- <div class="mb-3">
                                     <label for="fullName" class="form-label">Full Name</label>
                                     <input type="text" class="form-control" id="fullName" value="{{ $vendor->name }}"
                                         name="name">
@@ -101,7 +101,7 @@
                                     @error('name')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
-                                </div>
+                                </div> --}}
 
 
 

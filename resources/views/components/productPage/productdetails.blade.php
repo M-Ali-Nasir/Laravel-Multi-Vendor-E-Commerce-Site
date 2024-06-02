@@ -28,17 +28,25 @@
                 <div class="p-4">
 
 
-                    <p class="lead">
-                        {{-- <span class="me-1">
-                            <del>$200</del>
-                        </span> --}}
-                        <span id="price">{{ $product->price }}</span> &nbsp; <span>PKR/-</span>
-                    </p>
+
 
                     <strong>
                         <p class="" style="font-size: 20px;">{{ $product->name }}</p>
                     </strong>
 
+
+
+
+
+
+                    <p>{{ $product->description }}</p>
+
+                    <p class="lead">
+                        {{-- <span class="me-1">
+                            <del>$200</del>
+                        </span> --}}
+                        <span id="price">Rs.{{ $product->price }}/-</span>
+                    </p>
 
                     @php
                         $totalReviews = 0;
@@ -67,9 +75,6 @@
                     </div>
 
 
-
-                    <p>{{ $product->description }}</p>
-
                     <form class=" justify-content-left" method="get"
                         @if (Session::has('customer')) action= "{{ route('addToCart', ['customerId' => $customerId, 'productId' => $product->id]) }}"
                         @else 
@@ -89,14 +94,15 @@
                                         <option value=""
                                             data-image-url="{{ asset('storage/vendor/products/images/' . $product->image) }}"
                                             data-price="0"
-                                            data-variation='{"color": null, "weight": null, "size": null, "material": null}'>
+                                            data-variation='{"color": null, "weight": null, "size": null, "material": null}'
+                                            data-null = "1">
                                             Select Variation</option>
                                         @foreach ($product->variations as $variation)
                                             <option value="{{ $variation->id }}"
                                                 data-image-url="{{ asset('storage/vendor/products/images/' . $variation->pivot->image) }}"
                                                 data-price="{{ $variation->pivot->price_modifier }}"
                                                 data-variation="{{ $variation }}"
-                                                data-quantity="{{ $variation->pivot->quantity }}">
+                                                data-quantity="{{ $variation->pivot->quantity }}" data-null= "0">
                                                 {{ $variation->name }}</option>
                                         @endforeach
                                     </select>
@@ -189,6 +195,7 @@
         <div class="text-center">
             <h4>Reviews & Rating</h4>
         </div>
+
         <div>
             @if (count($product->reviews) != 0)
                 @foreach ($product->reviews as $review)
@@ -252,7 +259,7 @@
         var cartBtn1 = document.getElementById("cartBtn1");
         var cartBtn2 = document.getElementById("cartBtn2");
         var stockText = document.getElementById("stock");
-
+        var selectoption = selectedOption.getAttribute('data-null');
         // Set the max attribute of the quantity input field
         quantityInput.max = quantityInStock;
         quantityInput.disabled = false;
@@ -263,7 +270,7 @@
 
         @if (Session::has('customer'))
 
-            if (quantityInStock <= 0) {
+            if (quantityInStock <= 0 && selectoption == "0") {
                 quantityInput.disabled = true;
                 cartBtn1.disabled = true;
                 //cartBtn2.classList.add("disabled");
@@ -289,7 +296,7 @@
 
             }
         @else
-            if (quantityInStock <= 0) {
+            if (quantityInStock <= 0 && selectoption == "0") {
                 quantityInput.disabled = true;
                 //cartBtn1.disabled = true;
                 cartBtn1.classList.add("disabled");
@@ -329,7 +336,8 @@
         var priceModifier = Number(selectedOption.getAttribute('data-price'));
         var variationObjectString = selectedOption.getAttribute('data-variation');
 
-        var newPrice = originalPrice + priceModifier;
+        var updatedPrice = originalPrice + priceModifier;
+        var newPrice = updatedPrice;
         imageElement.src = newImageUrl;
         price.textContent = newPrice;
         priceInput.value = newPrice;

@@ -95,11 +95,11 @@
 
 
 
-    <div class="container">
-        <div class="row">
+    <div class="container py-0 my-0">
+        <div class="row p-0">
             <div class="col-md-12">
                 <!-- Product Cards -->
-                <div class="row">
+                <div class="row p-0">
                     <!-- Product Cards Here -->
                     <!-- Add more product cards as needed -->
                     @foreach ($products as $product)
@@ -127,7 +127,7 @@
                                 </a>
                                 <div class="card-body text-center">
                                     <h4 class="text-truncate card-title">{{ $product->name }}</h4>
-                                    <p class="text-muted">Starting from {{ $product->price }} PKR/-</p>
+                                    <p class="text-muted">Starting from Rs.{{ $product->price }}/-</p>
 
                                     @php
                                         $totalReviews = 0;
